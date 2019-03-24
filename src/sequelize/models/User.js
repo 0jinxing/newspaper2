@@ -1,5 +1,5 @@
-import { STRING, INTEGER } from 'sequelize';
-import sequelize from '../sequelize';
+const { STRING, INTEGER } = require('sequelize');
+const sequelize = require('../sequelize');
 
 const User = sequelize.define('user', {
   id: {
@@ -39,4 +39,4 @@ const User = sequelize.define('user', {
   github: STRING,
 });
 
-export default User;
+module.exports = User;

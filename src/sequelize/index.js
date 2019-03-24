@@ -1,17 +1,7 @@
-import CommentModel from './models/Comment'
-import EntryModel from './models/Entry'
-import FeedModel from './models/Feed'
-import FeedTagModel from './models/FeedTag'
-import TagModel from './models/Tag'
-import UserModel from "./models/User";
-import UserFeedModel from './models/UserFeed';
+const glob = require('glob');
 
-export default {
-  CommentModel,
-  EntryModel,
-  FeedModel,
-  FeedTagModel,
-  TagModel,
-  UserModel,
-  UserFeedModel
-}
+glob.sync('src/sequelize/models/**/*.js', { nodir: true, realpath: true }).forEach(p => {
+  const model = require(p);
+  const modelName = model.name.replace(/^\S/, s => s.toUpperCase()) + 'Model';
+  module.exports[modelName] = model;
+});

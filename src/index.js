@@ -1,9 +1,9 @@
-import Koa from 'koa';
-import { ApolloServer } from 'apollo-server-koa';
-import schema from './graphql';
-import models from './sequelize';
+const Koa = require('koa');
+const { ApolloServer } = require('apollo-server-koa');
+const schema = require('./graphql');
+const models = require('./sequelize');
 
-+ async function main() {
++(async function main() {
   const app = new Koa();
 
   const buildContext = async ({ ctx }) => {
@@ -12,13 +12,11 @@ import models from './sequelize';
 
   const graphqlServer = new ApolloServer({
     schema,
-    context: buildContext
+    context: buildContext,
   });
   graphqlServer.applyMiddleware({ app });
 
   app.listen({ port: 4000 }, () =>
-    console.log(
-      `Server ready at http://localhost:4000${graphqlServer.graphqlPath}`
-    )
+    console.log(`Server ready at http://localhost:4000${graphqlServer.graphqlPath}`)
   );
-}();
+})();

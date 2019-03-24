@@ -1,15 +1,15 @@
-import { GraphQLID, GraphQLString, GraphQLNonNull, GraphQLObjectType } from 'graphql';
-import jwt from 'jsonwebtoken';
+const { GraphQLID, GraphQLString, GraphQLNonNull, GraphQLObjectType } = require('graphql');
+const jwt = require('jsonwebtoken');
 
-import { getHash, doVerify } from '../utils/password';
-import withAuth from '../utils/withAuth'
+const { getHash, doVerify } = require('../utils/password');
+const withAuth = require('../utils/withAuth');
 
 const secret = process.env.JWT_SECRET || '172601673@qq.com';
 const accessExpires = process.env.JWT_ACCESS_EXPIRES || 1000 * 60 * 30; // 30 m
 const refreshExpires = process.env.JWT_REFRESH_EXPIRES || 1000 * 60 * 60 * 30; // 30 d
 
 // type
-export const UserType = new GraphQLObjectType({
+const UserType = new GraphQLObjectType({
   name: 'User',
   fields: {
     id: {
@@ -30,7 +30,7 @@ export const UserType = new GraphQLObjectType({
   },
 });
 
-export const SigninPayload = new GraphQLObjectType({
+const SigninPayload = new GraphQLObjectType({
   name: 'SigninPayload',
   fields: {
     user: {
@@ -46,17 +46,19 @@ export const SigninPayload = new GraphQLObjectType({
 });
 
 // query
-export const profile = withAuth({
+const profile = withAuth({
   type: UserType,
   resolve: async (root, args, { ctx, models }) => {
     const { UserModel } = models;
-    const { auth: { id } } = ctx;
-    return await UserModel.findOne({ where: { id } })
-  }
-})
+    const {
+      auth: { id },
+    } = ctx;
+    return await UserModel.findOne({ where: { id } });
+  },
+});
 
 // mutation
-export const register = {
+const registerUser = {
   type: SigninPayload,
   args: {
     email: {
@@ -81,20 +83,22 @@ export const register = {
     });
 
     const accessToken = jwt.sign({ id: user.id }, secret, { expiresIn: accessExpires });
-    const refreshToken = jwt.sign({ id: user.id, accessToken }, secret, { expiresIn: refreshExpires });
+    const refreshToken = jwt.sign({ id: user.id, accessToken }, secret, {
+      expiresIn: refreshExpires,
+    });
     return { user, accessToken, refreshToken };
   },
 };
 
-export const login = {
+const signinUser = {
   type: SigninPayload,
   args: {
     email: {
-      type: new GraphQLNonNull(GraphQLString)
+      type: new GraphQLNonNull(GraphQLString),
     },
     password: {
-      type: new GraphQLNonNull(GraphQLString)
-    }
+      type: new GraphQLNonNull(GraphQLString),
+    },
   },
   resolve: async (root, args, { models }) => {
     const { email, password } = args;
@@ -102,35 +106,44 @@ export const login = {
     const user = await UserModel.findOne({ where: { email } });
     if (doVerify(password, user.password, user.sale)) {
       const accessToken = jwt.sign({ id: user.id }, secret, { expiresIn: accessExpires });
-      const refreshToken = jwt.sign({ id: user.id, accessToken }, secret, { expiresIn: refreshExpires });
+      const refreshToken = jwt.sign({ id: user.id, accessToken }, secret, {
+        expiresIn: refreshExpires,
+      });
       return {
         user,
         accessToken,
-        refreshToken
-      }
+        refreshToken,
+      };
     }
-    throw new Error("ERR_INCORRECT_PASSWORD_OR_EMAIL")
-  }
+    throw new Error('ERR_INCORRECT_PASSWORD_OR_EMAIL');
+  },
 };
 
 // with auth
-export const modifyProfile = {
+const modifyProfile = {
   type: UserType,
   args: {
     username: {
-      type: GraphQLString
+      type: GraphQLString,
     },
     password: {
-      type: GraphQLString
+      type: GraphQLString,
     },
     wechat: {
-      type: GraphQLString
+      type: GraphQLString,
     },
     github: {
-      type: GraphQLString
-    }
+      type: GraphQLString,
+    },
   },
   resolve: withAuth(async (root, args, { ctx, db }) => {
     const { username, wechat, github, password } = args;
-  })
-}
+  }),
+};
+
+module.exports = {
+  profile,
+  registerUser,
+  signinUser,
+  modifyProfile,
+};

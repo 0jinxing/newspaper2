@@ -1,6 +1,6 @@
-import Sequelize from 'sequelize';
+const Sequelize = require('sequelize');
 
-export default new Sequelize('2newspaper', 'root', '123456', {
+module.exports = new Sequelize('2newspaper', 'root', '123456', {
   host: 'localhost',
   dialect: 'mysql',
   define: {

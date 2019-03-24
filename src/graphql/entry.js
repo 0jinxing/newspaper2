@@ -1,8 +1,8 @@
-import { GraphQLID, GraphQLString, GraphQLObjectType } from 'graphql';
-import DateType from './date.scalar';
-import { FeedType } from './feed';
+const { GraphQLID, GraphQLString, GraphQLObjectType } = require('graphql');
+const DateType = require('./date.scalar');
+const { FeedType } = require('./feed');
 
-export const EntryType = new GraphQLObjectType({
+const EntryType = new GraphQLObjectType({
   name: 'Entry',
   fields: {
     id: {
@@ -23,3 +23,7 @@ export const EntryType = new GraphQLObjectType({
     source: FeedType,
   },
 });
+
+module.exports = {
+  EntryType,
+};

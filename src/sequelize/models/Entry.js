@@ -1,5 +1,5 @@
-import { STRING, TEXT, INTEGER, DATE } from 'sequelize';
-import sequelize from '../sequelize';
+const { STRING, TEXT, INTEGER, DATE } = require('sequelize');
+const sequelize = require('../sequelize');
 
 const Entry = sequelize.define(
   'entry',
@@ -40,4 +40,4 @@ const Entry = sequelize.define(
   }
 );
 
-export default Entry;
+module.exports = Entry;

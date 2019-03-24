@@ -1,5 +1,5 @@
-import { STRING, INTEGER } from 'sequelize';
-import sequelize from '../sequelize';
+const { STRING, INTEGER } = require('sequelize');
+const sequelize = require('../sequelize');
 
 const Tag = sequelize.define('tag', {
   id: {
@@ -18,4 +18,4 @@ const Tag = sequelize.define('tag', {
   },
 });
 
-export default Tag;
+module.exports = Tag;

@@ -1,22 +1,22 @@
-import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
-import { login, register, profile } from './user';
+const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
+const { signinUser, registerUser, profile } = require('./user');
 
-export default new GraphQLSchema({
+module.exports = new GraphQLSchema({
   query: new GraphQLObjectType({
-    name: "Query",
+    name: 'Query',
     fields: {
       profile,
       demo: {
         type: GraphQLString,
-        resolve: () => "demo"
-      }
-    }
+        resolve: () => 'demo',
+      },
+    },
   }),
   mutation: new GraphQLObjectType({
-    name: "Mutation",
+    name: 'Mutation',
     fields: {
-      login,
-      register
-    }
-  })
-})
+      signinUser,
+      registerUser,
+    },
+  }),
+});

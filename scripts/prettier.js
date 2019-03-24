@@ -1,12 +1,22 @@
-const fs = require("fs");
-const prettier = require("prettier");
+/**
+ * copy to https://github.com/facebook/react/blob/master/scripts/prettier/index.js
+ * prettier api doc https://prettier.io/docs/en/api.html
+ *----------*****--------------
+ *  prettier all js and all ts.
+ *----------*****--------------
+ */
+
+const fs = require('fs');
 const glob = require("glob");
+const prettier = require('prettier');
 const chalk = require('chalk');
 const prettierConfigPath = require.resolve('../.prettierrc');
 
 const getPrettierFiles = () => {
   return glob.sync('src/**/*.js*', { ignore: ['**/node_modules/**', 'build/**'] });
 }
+
+let didError = false;
 
 const files = getPrettierFiles();
 
@@ -30,6 +40,11 @@ files.forEach(file => {
       console.log(chalk.green(`${file} is prettier`));
     }
   } catch (e) {
-    console.error(e);
+    didError = true;
   }
 });
+
+if (didError) {
+  process.exit(1);
+}
+console.log(chalk.hex('#1890FF')('prettier success!'));

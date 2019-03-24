@@ -1,5 +1,5 @@
-import { INTEGER } from 'sequelize';
-import sequelize from '../sequelize';
+const { INTEGER } = require('sequelize');
+const sequelize = require('../sequelize');
 
 const FeedTag = sequelize.define(
   'feedTag',
@@ -34,4 +34,4 @@ const FeedTag = sequelize.define(
   }
 );
 
-export default FeedTag;
+module.exports = FeedTag;

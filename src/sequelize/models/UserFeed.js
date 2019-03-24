@@ -1,5 +1,5 @@
-import { INTEGER, STRING } from 'sequelize';
-import sequelize from '../sequelize';
+const { INTEGER } = require('sequelize');
+const sequelize = require('../sequelize');
 
 const UserFeed = sequelize.define(
   'userFeed',
@@ -29,7 +29,9 @@ const UserFeed = sequelize.define(
         fields: ['feed_id'],
       },
     ],
+    freezeTableName: true,
+    tableName: 'user_feed',
   }
 );
 
-export default UserFeed;
+module.exports = UserFeed;

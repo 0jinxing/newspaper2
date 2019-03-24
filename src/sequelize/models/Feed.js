@@ -1,5 +1,5 @@
-import { STRING, INTEGER, DATE } from 'sequelize';
-import sequelize from '../sequelize';
+const { STRING, INTEGER, DATE } = require('sequelize');
+const sequelize = require('../sequelize');
 
 const Feed = sequelize.define(
   'feed',
@@ -32,4 +32,4 @@ const Feed = sequelize.define(
   }
 );
 
-export default Feed;
+module.exports = Feed;
