@@ -4,7 +4,7 @@
   "main": "scripts/start.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./src/index.js"
+    "start": "nodemon ./server/index.js"
   },
   "dependencies": {
     "@ant-design/icons": "1.1.0",
@@ -16,6 +16,7 @@
     "apollo-link-http": "^1.5.14",
     "apollo-server-koa": "^2.4.8",
     "babel-plugin-import": "^1.11.0",
+    "cross-fetch": "^3.0.1",
     "glob": "^7.1.3",
     "graphql": "^14.1.1",
     "graphql-tag": "^2.10.1",

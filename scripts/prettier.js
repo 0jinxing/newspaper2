@@ -7,14 +7,14 @@
  */
 
 const fs = require('fs');
-const glob = require("glob");
+const glob = require('glob');
 const prettier = require('prettier');
 const chalk = require('chalk');
 const prettierConfigPath = require.resolve('../.prettierrc');
 
 const getPrettierFiles = () => {
-  return glob.sync('src/**/*.js*', { ignore: ['**/node_modules/**', 'build/**'] });
-}
+  return glob.sync('**/*.js*', { ignore: ['**/node_modules/**', 'build/**', '.next/**'] });
+};
 
 let didError = false;
 
