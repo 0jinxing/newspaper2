@@ -7,7 +7,7 @@ function getHash(password, sale = '') {
 }
 
 function doVerify(password, sha1, sale = '') {
-  return hash(password, sale) === sha1;
+  return getHash(password, sale) === sha1;
 }
 
 module.exports = {

@@ -128,7 +128,7 @@ const signinUser = {
     const { email, password } = args;
     const { UserModel } = models;
     const user = await UserModel.findOne({ where: { email } });
-    if (doVerify(password, user.password, user.sale)) {
+    if (user && doVerify(password, user.password, user.sale)) {
       const accessToken = jwt.sign({ id: user.id }, secret, { expiresIn: accessExpires });
       const refreshToken = jwt.sign({ id: user.id, accessToken }, secret, {
         expiresIn: refreshExpires,
