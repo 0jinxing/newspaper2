@@ -4,7 +4,8 @@
   "main": "scripts/start.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./server/index.js"
+    "start": "nodemon ./server/index.js",
+    "prettier": "node ./scripts/prettier.js"
   },
   "dependencies": {
     "@ant-design/icons": "1.1.0",

@@ -6,4 +6,10 @@ if (typeof require !== 'undefined') {
   require.extensions['.css'] = file => {};
 }
 
-module.exports = withCss();
+module.exports = withCss({
+  cssModules: true,
+  cssLoaderOptions: {
+    importLoaders: 1,
+    localIdentName: '[local]___[hash:base64:5]',
+  },
+});
