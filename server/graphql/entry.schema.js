@@ -1,6 +1,6 @@
 const { GraphQLID, GraphQLString, GraphQLObjectType } = require('graphql');
 const DateType = require('./date.scalar');
-const { FeedType } = require('./feed');
+const { FeedType } = require('./feed.schema');
 
 const EntryType = new GraphQLObjectType({
   name: 'Entry',

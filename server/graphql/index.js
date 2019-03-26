@@ -1,22 +1,24 @@
-const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
-const { signinUser, registerUser, profile } = require('./user');
+const glob = require('glob');
+const { GraphQLSchema, GraphQLObjectType } = require('graphql');
+
+const fields = glob.sync('server/graphql/*.schema.js', { nodir: true, realpath: true }).reduce(
+  (pre, s) => {
+    const schema = require(s);
+    return {
+      query: { ...pre.query, ...schema.query },
+      mutation: { ...pre.mutation, ...schema.mutation },
+    };
+  },
+  { query: {}, mutation: {} }
+);
 
 module.exports = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
-    fields: {
-      profile,
-      demo: {
-        type: GraphQLString,
-        resolve: () => 'demo',
-      },
-    },
+    fields: fields.query
   }),
   mutation: new GraphQLObjectType({
     name: 'Mutation',
-    fields: {
-      signinUser,
-      registerUser,
-    },
+    fields: fields.mutation
   }),
 });

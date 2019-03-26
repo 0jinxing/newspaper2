@@ -1,9 +1,15 @@
+import { Component } from 'react';
+import { Input, Icon, Form, Button } from 'antd';
+import { Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
 import BasicLayout from '../layouts/BasicLayout';
 
-export default () => {
-  return (
-    <BasicLayout>
-      <div>lorem</div>
-    </BasicLayout>
-  );
-};
+const signinUser
+
+@Form.create()
+class LoginPage extends Component {
+  render() {
+  }
+}
+
+export default LoginPage;

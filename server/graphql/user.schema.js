@@ -1,4 +1,10 @@
-const { GraphQLID, GraphQLString, GraphQLNonNull, GraphQLObjectType } = require('graphql');
+const {
+  GraphQLID,
+  GraphQLString,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLBoolean,
+} = require('graphql');
 const jwt = require('jsonwebtoken');
 
 const { getHash, doVerify } = require('../utils/password');
@@ -29,7 +35,6 @@ const UserType = new GraphQLObjectType({
     },
   },
 });
-
 const SigninPayload = new GraphQLObjectType({
   name: 'SigninPayload',
   fields: {
@@ -58,6 +63,26 @@ const profile = withAuth({
 });
 
 // mutation
+const modifyProfile = withAuth({
+  type: UserType,
+  args: {
+    username: {
+      type: GraphQLString,
+    },
+    password: {
+      type: GraphQLString,
+    },
+    wechat: {
+      type: GraphQLString,
+    },
+    github: {
+      type: GraphQLString,
+    },
+  },
+  resolve: async (root, args, { ctx, db }) => {
+    const { username, wechat, github, password } = args;
+  },
+});
 const registerUser = {
   type: SigninPayload,
   args: {
@@ -89,7 +114,6 @@ const registerUser = {
     return { user, accessToken, refreshToken };
   },
 };
-
 const signinUser = {
   type: SigninPayload,
   args: {
@@ -118,32 +142,26 @@ const signinUser = {
     throw new Error('ERR_INCORRECT_PASSWORD_OR_EMAIL');
   },
 };
-
-// with auth
-const modifyProfile = {
-  type: UserType,
+const checkEmail = {
+  type: GraphQLBoolean,
   args: {
-    username: {
-      type: GraphQLString,
-    },
-    password: {
-      type: GraphQLString,
-    },
-    wechat: {
-      type: GraphQLString,
-    },
-    github: {
-      type: GraphQLString,
+    email: {
+      type: new GraphQLNonNull(GraphQLString),
     },
   },
-  resolve: withAuth(async (root, args, { ctx, db }) => {
-    const { username, wechat, github, password } = args;
-  }),
+  resolve: async (root, { email }, { models: { UserModel } }) => {
+    return !(await UserModel.findOne({ where: { email } }));
+  },
 };
 
 module.exports = {
-  profile,
-  registerUser,
-  signinUser,
-  modifyProfile,
+  UserType,
+  SigninPayload,
+  query: { profile },
+  mutation: {
+    registerUser,
+    signinUser,
+    modifyProfile,
+    checkEmail,
+  },
 };
