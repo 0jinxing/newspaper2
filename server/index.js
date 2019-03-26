@@ -1,8 +1,9 @@
 const Koa = require('koa');
 const { ApolloServer } = require('apollo-server-koa');
+const next = require('next');
 const schema = require('./graphql');
 const models = require('./sequelize');
-const next = require('next');
+const logger = require('./logger');
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const server = new Koa();
@@ -12,6 +13,12 @@ const app = next({ dev, dir: './client' });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
+  // logger setting
+  server.use(async (ctx, next) => {
+    logger.info(`[${ctx.method}] ${ctx.path}`);
+    await next();
+  });
+
   // graphql server setting
   const buildContext = async ({ ctx }) => {
     return { ctx, models };
@@ -23,7 +30,6 @@ app.prepare().then(() => {
   graphqlServer.applyMiddleware({ app: server, path: '/graphql' });
 
   // next router app setting
-  // server.use(router.routes());
   server.use(async (ctx, next) => {
     if (ctx.request.method.toUpperCase() === 'GET') {
       await handle(ctx.req, ctx.res);
