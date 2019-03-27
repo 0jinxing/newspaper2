@@ -4,7 +4,9 @@ import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
 import BasicLayout from '../layouts/BasicLayout';
 
-const signinUser
+const signinUser = gql`
+
+`
 
 @Form.create()
 class LoginPage extends Component {

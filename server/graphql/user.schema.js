@@ -21,6 +21,9 @@ const UserType = new GraphQLObjectType({
     id: {
       type: GraphQLID,
     },
+    email: {
+      type: GraphQLString,
+    },
     username: {
       type: GraphQLString,
     },
@@ -35,6 +38,7 @@ const UserType = new GraphQLObjectType({
     },
   },
 });
+
 const SigninPayload = new GraphQLObjectType({
   name: 'SigninPayload',
   fields: {
@@ -83,6 +87,7 @@ const modifyProfile = withAuth({
     const { username, wechat, github, password } = args;
   },
 });
+
 const registerUser = {
   type: SigninPayload,
   args: {
@@ -114,6 +119,7 @@ const registerUser = {
     return { user, accessToken, refreshToken };
   },
 };
+
 const signinUser = {
   type: SigninPayload,
   args: {
@@ -142,6 +148,7 @@ const signinUser = {
     throw new Error('ERR_INCORRECT_PASSWORD_OR_EMAIL');
   },
 };
+
 const checkEmail = {
   type: GraphQLBoolean,
   args: {
