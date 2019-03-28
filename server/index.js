@@ -1,6 +1,5 @@
 const Koa = require('koa');
 const { ApolloServer } = require('apollo-server-koa');
-const next = require('next');
 const schema = require('./graphql');
 const models = require('./sequelize');
 const logger = require('./logger');
@@ -9,6 +8,7 @@ const port = parseInt(process.env.PORT, 10) || 3000;
 const server = new Koa();
 const dev = process.env.NODE_ENV !== 'production';
 
+const next = require('next');
 const app = next({ dev, dir: './client' });
 const handle = app.getRequestHandler();
 

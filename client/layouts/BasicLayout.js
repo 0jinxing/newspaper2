@@ -1,6 +1,6 @@
 import { Col, Row, Layout } from 'antd';
 import Copyright from '../components/Copyright';
-import './BasicLayout.css';
+import './BasicLayout.less';
 
 const { Content, Footer, Header } = Layout;
 

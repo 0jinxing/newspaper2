@@ -4,7 +4,7 @@ import { Mutation } from 'react-apollo';
 import { Input, Icon, Form, Button, Checkbox } from 'antd';
 import gql from 'graphql-tag';
 import BasicLayout from '../layouts/BasicLayout';
-import './Login.css';
+import './Login.less';
 
 const FormItem = Form.Item;
 
