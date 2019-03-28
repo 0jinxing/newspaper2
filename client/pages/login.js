@@ -1,12 +1,12 @@
 import { Component } from 'react';
-import router from 'next/router';
+import Link from 'next/link';
 import { Mutation } from 'react-apollo';
-import { Input, Icon, Form, Button, Checkbox } from 'antd';
+import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
-import BasicLayout from '../layouts/BasicLayout';
-import './Login.less';
+import './login.less';
 
 const FormItem = Form.Item;
+const { Content, Header } = Layout;
 
 const SIGNIN_USER = gql`
   mutation SigninUser($email: String!, $password: String!) {
@@ -40,55 +40,66 @@ class LoginPage extends Component {
         }}
       >
         {(signinUser, { data, loading }) => (
-          <BasicLayout>
-            <h1 className="login-form-title">Login to 2newspaper</h1>
-            <Form
-              onSubmit={e => {
-                e.preventDefault();
-                validateFields((error, values) => {
-                  if (!error) {
-                    const { email, password } = values;
-                    signinUser({ variables: { email, password } });
-                  }
-                });
-              }}
-              className="login-form"
-            >
-              <FormItem>
-                {getFieldDecorator('email', {
-                  rules: [
-                    { required: true, message: 'Please input your email!' },
-                    { type: 'email', message: '邮箱格式不正确' },
-                  ],
-                })(<Input prefix={<Icon type="user" />} placeholder="Email" />)}
-              </FormItem>
-
-              <FormItem>
-                {getFieldDecorator('password', {
-                  rules: [{ required: true, message: 'Please input your password!' }],
-                })(<Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />)}
-              </FormItem>
-
-              <FormItem>
-                {getFieldDecorator('remember', {
-                  valuePropName: 'checked',
-                  initialValue: true,
-                })(<Checkbox>Remember me</Checkbox>)}
-                <a className="login-form-forgot" href="">
-                  Forgot password
-                </a>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
+          <Layout className="login-layout">
+            <Header className="sentence-header">
+              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
+            </Header>
+            <Content>
+              <Card className="login-form-card">
+                <div className="info-wrap">
+                  <img src="/static/backpack.png" />
+                  <h1>Sign in to 2Newspaper</h1>
+                </div>
+                <Form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    validateFields((error, values) => {
+                      if (!error) {
+                        const { email, password } = values;
+                        signinUser({ variables: { email, password } });
+                      }
+                    });
+                  }}
                 >
-                  Log in
-                </Button>
-                Or <a href="">register now!</a>
-              </FormItem>
-            </Form>
-          </BasicLayout>
+                  <FormItem>
+                    {getFieldDecorator('email', {
+                      rules: [
+                        { required: true, message: 'Please input your email!' },
+                        { type: 'email', message: '邮箱格式不正确' },
+                      ],
+                    })(<Input prefix={<Icon type="link" />} placeholder="Email" />)}
+                  </FormItem>
+
+                  <FormItem>
+                    {getFieldDecorator('password', {
+                      rules: [{ required: true, message: 'Please input your password!' }],
+                    })(
+                      <Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />
+                    )}
+                  </FormItem>
+
+                  <FormItem>
+                    {getFieldDecorator('remember', {
+                      valuePropName: 'checked',
+                      initialValue: true,
+                    })(<Checkbox>Remember me</Checkbox>)}
+                    <a className="login-form-forgot" href="">
+                      Forgot password
+                    </a>
+                    <Button
+                      loading={loading}
+                      type="primary"
+                      htmlType="submit"
+                      className="login-form-button"
+                    >
+                      Sign in
+                    </Button>
+                    Or <Link href="/register"><a>register now!</a></Link>
+                  </FormItem>
+                </Form>
+              </Card>
+            </Content>
+          </Layout>
         )}
       </Mutation>
     );

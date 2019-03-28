@@ -1,0 +1,55 @@
+.register-layout {
+    height: 100%;
+    background: url(/static/leaves-pattern.png)
+  }
+  
+  .sentence {
+    color: #cfcfcf;
+  }
+  
+  .register-form-card {
+    max-width: 400px;
+    margin: 10vh auto;
+    padding: 20px 1vh;
+    box-shadow: 2px 1px 10px rgba(0, 0, 0, .2);
+  }
+  
+  .register-form-forgot {
+    float: right;
+  }
+  
+  .register-form-button {
+    width: 100%;
+  }
+  
+  .info-wrap {
+    text-align: center;
+  }
+  
+  .info-wrap img {
+    width: 64px;
+    margin-bottom: 32px;
+  }
+  
+  .info-wrap h1 {
+    text-align: center;
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 16px;
+  }
+  
+  @media(max-width: 600px) {
+    .register-form-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: 0;
+      width: 100%;
+      min-width: 100%;
+      height: 100%;
+      .info-wrap {
+        position: relative;
+        top: -4vh;
+      }
+    }
+  }
