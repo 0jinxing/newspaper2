@@ -1,4 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document';
+import 'antd/dist/antd.css';
 
 export default class MyDocument extends Document {
   render() {

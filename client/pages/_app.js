@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch';
+// import fetch from 'isomorphic-fetch';
 import App, { Container } from 'next/app';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
@@ -6,7 +6,20 @@ import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 const client = new ApolloClient({
-  link: new HttpLink({ uri: '/graphql', fetch, credentials: 'same-origin' }),
+  link: new HttpLink({
+    uri: '/graphql',
+    fetch: (...params) => {
+      const [url, options] = params;
+      return fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: ``,
+        },
+      });
+    },
+    credentials: 'same-origin',
+  }),
   cache: new InMemoryCache(),
 });
 

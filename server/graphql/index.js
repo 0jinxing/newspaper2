@@ -15,10 +15,10 @@ const fields = glob.sync('server/graphql/*.schema.js', { nodir: true, realpath: 
 module.exports = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
-    fields: fields.query
+    fields: fields.query,
   }),
   mutation: new GraphQLObjectType({
     name: 'Mutation',
-    fields: fields.mutation
+    fields: fields.mutation,
   }),
 });

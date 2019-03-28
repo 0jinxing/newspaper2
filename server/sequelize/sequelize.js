@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const logger = require("../logger");
+const logger = require('../logger');
 
 module.exports = new Sequelize('2newspaper', 'root', '123456', {
   host: 'localhost',
@@ -11,5 +11,5 @@ module.exports = new Sequelize('2newspaper', 'root', '123456', {
     deletedAt: 'deleted_at',
     version: true,
   },
-  logging: logger.info.bind(logger)
+  logging: logger.info.bind(logger),
 });

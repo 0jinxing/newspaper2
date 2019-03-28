@@ -7,8 +7,7 @@ const {
 } = require('graphql');
 const jwt = require('jsonwebtoken');
 
-const { getHash, doVerify } = require('../utils/password');
-const withAuth = require('../utils/withAuth');
+const { passwordHash, passwordVerify, withAuth } = require('../utils/auth');
 
 const secret = process.env.JWT_SECRET || '172601673@qq.com';
 const accessExpires = process.env.JWT_ACCESS_EXPIRES || 1000 * 60 * 30; // 30 m
@@ -108,7 +107,7 @@ const registerUser = {
     const user = await UserModel.create({
       email,
       username,
-      password: getHash(password, sale),
+      password: passwordHash(password, sale),
       sale,
     });
 
@@ -134,7 +133,7 @@ const signinUser = {
     const { email, password } = args;
     const { UserModel } = models;
     const user = await UserModel.findOne({ where: { email } });
-    if (user && doVerify(password, user.password, user.sale)) {
+    if (user && passwordVerify(password, user.password, user.sale)) {
       const accessToken = jwt.sign({ id: user.id }, secret, { expiresIn: accessExpires });
       const refreshToken = jwt.sign({ id: user.id, accessToken }, secret, {
         expiresIn: refreshExpires,
