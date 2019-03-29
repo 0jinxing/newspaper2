@@ -42,7 +42,7 @@ class RegisterPage extends Component {
         {(signinUser, { data, loading }) => (
           <Layout className="register-layout">
             <Header>
-              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
+              {/* <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p> */}
             </Header>
             <Content>
               <Card className="register-form-card">

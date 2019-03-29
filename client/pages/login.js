@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { Mutation } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
-import './login.less';
-
+import styles from './login.less';
+console.log(styles.a)
 const FormItem = Form.Item;
 const { Content, Header } = Layout;
 
@@ -42,13 +42,13 @@ class LoginPage extends Component {
         {(signinUser, { data, loading }) => (
           <Layout className="login-layout">
             <Header className="sentence-header">
-              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
+              {/* <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p> */}
             </Header>
             <Content>
               <Card className="login-form-card">
                 <div className="info-wrap">
                   <img src="/static/backpack.png" />
-                  <h1>Sign in to 2Newspaper</h1>
+                  <h1 className={styles.a}>Sign in to 2Newspaper</h1>
                 </div>
                 <Form
                   onSubmit={e => {
