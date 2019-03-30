@@ -4,7 +4,8 @@ import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import './_app.less';
+import { getAccessToken, getRefreshToken } from '../utils/auth';
+import '../styles/app.less';
 
 const client = new ApolloClient({
   link: new HttpLink({
@@ -15,7 +16,7 @@ const client = new ApolloClient({
         ...options,
         headers: {
           ...options.headers,
-          Authorization: ``,
+          Authorization: `Bearer ${getAccessToken()}`,
         },
       });
     },

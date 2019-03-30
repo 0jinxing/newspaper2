@@ -13,8 +13,7 @@ const Tag = sequelize.define('tag', {
     unique: true,
   },
   color: {
-    type: STRING,
-    allowNull: false,
+    type: STRING
   },
 });
 

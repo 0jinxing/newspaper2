@@ -1,8 +1,10 @@
 import { Component } from 'react';
 import Link from 'next/link';
+import router from 'next/router';
 import { Mutation } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
+import { setAccessToken, setRefreshToken } from '../utils/auth';
 import '../styles/sign.less';
 
 const FormItem = Form.Item;
@@ -26,7 +28,7 @@ const SIGNIN_USER = gql`
 
 class LoginPage extends Component {
   static getInitialProps({ query }) {
-    return { query }
+    return { query };
   }
 
   render() {
@@ -38,6 +40,11 @@ class LoginPage extends Component {
       <Mutation
         mutation={SIGNIN_USER}
         onCompleted={data => {
+          const {
+            signinUser: { accessToken, refreshToken },
+          } = data;
+          setAccessToken(accessToken);
+          setRefreshToken(refreshToken);
           const { redirect_uri } = this.props;
           if (redirect_uri) router.push(redirect_uri);
           else router.push('/');
@@ -98,7 +105,10 @@ class LoginPage extends Component {
                     >
                       Sign in
                     </Button>
-                    Or <Link href="/register"><a>register now!</a></Link>
+                    Or{' '}
+                    <Link href="/register">
+                      <a>register now!</a>
+                    </Link>
                   </FormItem>
                 </Form>
               </Card>

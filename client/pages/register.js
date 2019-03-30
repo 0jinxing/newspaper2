@@ -63,9 +63,7 @@ class RegisterPage extends Component {
                 >
                   <FormItem>
                     {getFieldDecorator('username', {
-                      rules: [
-                        { required: true, message: 'Please input your username!' },
-                      ],
+                      rules: [{ required: true, message: 'Please input your username!' }],
                     })(<Input prefix={<Icon type="user" />} placeholder="Username" />)}
                   </FormItem>
                   <FormItem>
@@ -93,7 +91,10 @@ class RegisterPage extends Component {
                     >
                       Sign up
                     </Button>
-                    Or <Link href={{ pathname: "/login", query: { name: 1 } }}><a>login now!</a></Link>
+                    Or{' '}
+                    <Link href={{ pathname: '/login', query: { name: 1 } }}>
+                      <a>login now!</a>
+                    </Link>
                   </FormItem>
                 </Form>
               </Card>
