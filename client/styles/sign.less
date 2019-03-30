@@ -1,29 +1,29 @@
-.register-layout {
-    height: 100%;
-    background: url(/static/leaves-pattern.png)
-  }
+.sign-wrap {
+  height: 100%;
+  background: url(/static/leaves-pattern.png);
   
   .sentence {
     color: #cfcfcf;
   }
   
-  .register-form-card {
+  .sign-form-card {
     max-width: 400px;
     margin: 10vh auto;
     padding: 20px 1vh;
-    box-shadow: 2px 1px 10px rgba(0, 0, 0, .2);
+    box-shadow: 2px 1px 10px rgba(0, 0, 0, 0.2);
   }
   
-  .register-form-forgot {
+  .sign-form-forgot {
     float: right;
   }
   
-  .register-form-button {
+  .sign-form-button {
     width: 100%;
   }
   
   .info-wrap {
     text-align: center;
+    margin-bottom: 64px;
   }
   
   .info-wrap img {
@@ -35,11 +35,10 @@
     text-align: center;
     font-size: 18px;
     margin: 0;
-    margin-bottom: 16px;
   }
   
-  @media(max-width: 600px) {
-    .register-form-card {
+  @media (max-width: 600px) {
+    .sign-form-card {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -52,4 +51,8 @@
         top: -4vh;
       }
     }
-  }
+    .sentence-header {
+      display: none;
+    }
+  }  
+}

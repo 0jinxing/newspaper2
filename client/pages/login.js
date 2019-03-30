@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { Mutation } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
-import styles from './login.less';
-console.log(styles.a)
+import '../styles/sign.less';
+
 const FormItem = Form.Item;
 const { Content, Header } = Layout;
 
@@ -25,6 +25,10 @@ const SIGNIN_USER = gql`
 `;
 
 class LoginPage extends Component {
+  static getInitialProps({ query }) {
+    return { query }
+  }
+
   render() {
     const {
       form: { getFieldDecorator, validateFields },
@@ -34,21 +38,21 @@ class LoginPage extends Component {
       <Mutation
         mutation={SIGNIN_USER}
         onCompleted={data => {
-          const redirect = this.props.match.params.redirect;
-          if (redirect) router.push(redirect);
+          const { redirect_uri } = this.props;
+          if (redirect_uri) router.push(redirect_uri);
           else router.push('/');
         }}
       >
         {(signinUser, { data, loading }) => (
-          <Layout className="login-layout">
-            <Header className="sentence-header">
-              {/* <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p> */}
+          <Layout className="sign-wrap">
+            <Header>
+              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
             </Header>
             <Content>
-              <Card className="login-form-card">
+              <Card className="sign-form-card">
                 <div className="info-wrap">
                   <img src="/static/backpack.png" />
-                  <h1 className={styles.a}>Sign in to 2Newspaper</h1>
+                  <h1>Sign in to 2Newspaper</h1>
                 </div>
                 <Form
                   onSubmit={e => {
@@ -83,14 +87,14 @@ class LoginPage extends Component {
                       valuePropName: 'checked',
                       initialValue: true,
                     })(<Checkbox>Remember me</Checkbox>)}
-                    <a className="login-form-forgot" href="">
+                    <a className="sign-form-forgot" href="">
                       Forgot password
                     </a>
                     <Button
                       loading={loading}
                       type="primary"
                       htmlType="submit"
-                      className="login-form-button"
+                      className="sign-form-button"
                     >
                       Sign in
                     </Button>

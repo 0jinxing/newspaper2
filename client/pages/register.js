@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Mutation } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
-import './register.less';
+import '../styles/sign.less';
 
 const FormItem = Form.Item;
 const { Content, Header } = Layout;
@@ -40,12 +40,12 @@ class RegisterPage extends Component {
         }}
       >
         {(signinUser, { data, loading }) => (
-          <Layout className="register-layout">
+          <Layout className="sign-wrap">
             <Header>
-              {/* <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p> */}
+              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
             </Header>
             <Content>
-              <Card className="register-form-card">
+              <Card className="sign-form-card">
                 <div className="info-wrap">
                   <img src="/static/backpack.png" />
                   <h1>Sign up for 2Newspaper</h1>
@@ -89,11 +89,11 @@ class RegisterPage extends Component {
                       loading={loading}
                       type="primary"
                       htmlType="submit"
-                      className="register-form-button"
+                      className="sign-form-button"
                     >
                       Sign up
                     </Button>
-                    Or <Link href="/login">login now!</Link>
+                    Or <Link href={{ pathname: "/login", query: { name: 1 } }}><a>login now!</a></Link>
                   </FormItem>
                 </Form>
               </Card>
