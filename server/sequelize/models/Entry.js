@@ -30,8 +30,12 @@ const Entry = sequelize.define(
       type: TEXT,
       allowNull: false,
     },
-    source: {
+    snippet: {
+      type: TEXT,
+    },
+    feedId: {
       type: INTEGER.UNSIGNED,
+      field: 'feed_id',
       allowNull: false,
     },
   },

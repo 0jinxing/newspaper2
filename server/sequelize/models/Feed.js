@@ -23,7 +23,7 @@ const Feed = sequelize.define(
     },
     updated: {
       type: DATE,
-      commit: '`Feed` 更新时间，区别于 update_at'
+      commit: '`Feed` 更新时间，区别于 update_at',
     },
   },
   {
