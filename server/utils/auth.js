@@ -32,7 +32,6 @@ const withAuth = target => {
       const token = /Bearer\s+(.*)/.exec(ctx.headers['authorization'])[1];
       // @TODO error handle
       const auth = jwt.verify(token, accessSecret);
-      console.log(auth);
       return target.resolve(root, args, { ...context, auth });
     },
   });

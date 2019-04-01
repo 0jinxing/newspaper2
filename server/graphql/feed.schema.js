@@ -6,6 +6,7 @@ const {
   GraphQLNonNull,
   GraphQLObjectType,
 } = require('graphql');
+const Sequelize = require('sequelize');
 const moment = require('moment');
 const RssParser = require('rss-parser');
 const DateType = require('./date.scalar');
@@ -35,7 +36,7 @@ const FeedPaginationType = createPaginationType(FeedType, 'FeedPagination');
 
 // query
 const allFeedList = {
-  type: new GraphQLList(FeedType),
+  type: FeedPaginationType,
   args: {
     offset: {
       type: GraphQLInt,
@@ -48,9 +49,11 @@ const allFeedList = {
     },
   },
   resolve: async (root, args, { ctx, models }) => {
-    const { offset, limit } = args;
+    const { offset = 0, limit } = args;
     const { FeedModel } = models;
-    return FeedModel.findAndCountAll({ offset, limit });
+    return limit
+      ? FeedModel.findAndCountAll({ offset, limit })
+      : FeedModel.findAndCountAll({ offset });
   },
 };
 
@@ -110,7 +113,7 @@ const feedListOfUser = {
 };
 
 // mutation
-const createFeed = withAuth({
+const addOrCreateFeedForOwner = withAuth({
   type: FeedType,
   args: {
     link: {
@@ -119,20 +122,18 @@ const createFeed = withAuth({
   },
   resolve: async (root, args, { auth, ctx, models, db }) => {
     const { link } = args;
-    const { FeedModel, UserFeedModel, EntryModel } = models;
-    db.transaction(async t => {
+    const { FeedModel, RelUserFeedModel, EntryModel } = models;
+    return db.transaction(async t => {
       const { id: userId } = auth;
       const parser = new RssParser();
-      const rss = parser.parseURL(link);
-      const [existOrNewFeed, created] = await FeedModel.findOrCreate(
-        {
-          where: { link },
-          defaults: { title: rss.title, updated: rss.updated },
-        },
-        { transaction: t }
-      );
+      const parseResult = await parser.parseURL(link);
+      const [existOrNewFeed, created] = await FeedModel.findOrCreate({
+        where: { link },
+        defaults: { title: parseResult.title, updated: +moment(parseResult.lastBuildDate) },
+        transaction: t,
+      });
       // 转换格式
-      const enterObjectArray = rss.items.map(item => ({
+      const enterObjectArray = parseResult.items.map(item => ({
         title: item.title,
         link: item.link,
         updated: +moment(item.isoDate),
@@ -144,30 +145,41 @@ const createFeed = withAuth({
         // 新建 feed，全部插入
         EntryModel.bulkCreate(enterObjectArray, { transaction: t });
       } else {
-        // 不是新建的，需要判断是否为更新的内容
-        enterObjectArray.map(eo => {
-          // EntryModel.findOrCreate()
-        });
+        // 删除旧的，插入新的
+        await EntryModel.destroy(
+          {
+            where: {
+              link: { [Sequelize.Op.in]: enterObjectArray.map(eo => eo.link) },
+            },
+          },
+          { transaction: t }
+        );
+        await EntryModel.bulkCreate(enterObjectArray, { transaction: t });
       }
-      rss.items.forEach(e => {
-        // @TODO 判断是否已经存在
-        if (created) {
-          // feed 为新建的，无需判断是否已经存在，直接插入
-          EntryModel.create({
-            title: e.title,
-            link: e.link,
-            updated: +moment(e.isoDate),
-            content: e.content,
-            snippet: e.contentSnippet,
-            feedId: existOrNewFeed.id,
-          });
-        } else {
-          // feed 为已有的，判断是否已经存在或者内容存在更改
-        }
+      // 创建对应记录（存在则不创建）
+      await RelUserFeedModel.findOrCreate({
+        where: { userId, feedId: existOrNewFeed.id },
+        transaction: t,
       });
-      const uf = await UserFeedModel.create({ userId, feedId: newFeed.id }, { transaction: t });
-      return newFeed;
+      return existOrNewFeed;
     });
+  },
+});
+
+const deleteOwnerFeed = withAuth({
+  type: FeedType,
+  args: {
+    id: {
+      type: GraphQLID,
+    },
+  },
+  resolve: async (root, args, { models, auth }) => {
+    const { id } = args;
+    const { RelUserFeedModel, FeedModel } = models;
+    const rel = await RelUserFeedModel.findOne({ where: { id } });
+    const delFeed = await FeedModel.findOne({ where: { id: rel.feedId } });
+    await rel.destroy();
+    return delFeed;
   },
 });
 
@@ -180,6 +192,7 @@ module.exports = {
     feedListOfUser,
   },
   mutation: {
-    createFeed,
+    addOrCreateFeedForOwner,
+    deleteOwnerFeed,
   },
 };

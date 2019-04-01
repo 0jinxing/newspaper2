@@ -1,9 +1,13 @@
 const chalk = require('chalk');
 const models = require('../server/sequelize');
+const db = require('../server/sequelize/sequelize');
 
-Object.values(models).forEach(model => {
-  model.sync({ force: true });
-  console.log(chalk.green(`${model.name} is sync`));
+Promise.all(
+  Object.values(models).map(model => {
+    console.log(chalk.green(`${model.name} sync`));
+    return model.sync({ force: true });
+  })
+).then(() => {
+  db.close();
+  console.log(chalk.hex('#1890FF')('models sync success'));
 });
-
-console.log(chalk.hex('#1890FF')('models sync success'));

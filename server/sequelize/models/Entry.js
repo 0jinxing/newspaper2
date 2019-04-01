@@ -41,6 +41,7 @@ const Entry = sequelize.define(
   },
   {
     indexes: [{ fields: ['title'] }],
+    paranoid: false,
   }
 );
 

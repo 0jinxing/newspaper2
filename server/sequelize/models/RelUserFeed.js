@@ -1,8 +1,8 @@
 const { INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const UserFeed = sequelize.define(
-  'userFeed',
+const RelUserFeed = sequelize.define(
+  'relUserFeed',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -30,8 +30,8 @@ const UserFeed = sequelize.define(
       },
     ],
     freezeTableName: true,
-    tableName: 'user_feed',
+    tableName: 'rel_user_feed',
   }
 );
 
-module.exports = UserFeed;
+module.exports = RelUserFeed;

@@ -6,7 +6,6 @@ const {
   GraphQLBoolean,
 } = require('graphql');
 const jwt = require('jsonwebtoken');
-
 const { passwordHash, passwordVerify, withAuth } = require('../utils/auth');
 
 const secret = process.env.JWT_SECRET || '172601673@qq.com';
@@ -56,12 +55,9 @@ const SigninPayload = new GraphQLObjectType({
 // query
 const profile = withAuth({
   type: UserType,
-  resolve: async (root, args, { ctx, models }) => {
+  resolve: async (root, args, { ctx, models, auth }) => {
     const { UserModel } = models;
-    const {
-      auth: { id },
-    } = ctx;
-    return await UserModel.findOne({ where: { id } });
+    return await UserModel.findOne({ where: { id: auth.id } });
   },
 });
 
@@ -72,9 +68,6 @@ const modifyProfile = withAuth({
     username: {
       type: GraphQLString,
     },
-    password: {
-      type: GraphQLString,
-    },
     wechat: {
       type: GraphQLString,
     },
@@ -82,8 +75,15 @@ const modifyProfile = withAuth({
       type: GraphQLString,
     },
   },
-  resolve: async (root, args, { ctx, db }) => {
-    const { username, wechat, github, password } = args;
+  resolve: async (root, args, { auth, ctx, db, models }) => {
+    const { username, wechat, github } = args;
+    const { UserModel } = models;
+    const currentUser = await UserModel.findOne({ where: { id: auth.id } });
+    currentUser.username = username ? username : currentUser.username;
+    currentUser.wechat = wechat ? wechat : currentUser.wechat;
+    currentUser.github = github ? github : currentUser.github;
+    await currentUser.save();
+    return currentUser;
   },
 });
 
@@ -156,7 +156,8 @@ const checkEmail = {
     },
   },
   resolve: async (root, { email }, { models: { UserModel } }) => {
-    return !(await UserModel.findOne({ where: { email } }));
+    const existUser = await UserModel.findOne({ where: { email } });
+    return !existUser;
   },
 };
 

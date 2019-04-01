@@ -12,4 +12,5 @@ module.exports = new Sequelize('2newspaper', 'root', '123456', {
     version: true,
   },
   logging: logger.info.bind(logger),
+  // logging: false,
 });

@@ -1,8 +1,8 @@
 const { INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const FeedTag = sequelize.define(
-  'feedTag',
+const RelFeedTag = sequelize.define(
+  'relFeedTag',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -30,8 +30,8 @@ const FeedTag = sequelize.define(
       },
     ],
     freezeTableName: true,
-    tableName: 'feed_tag',
+    tableName: 'rel_feed_tag',
   }
 );
 
-module.exports = FeedTag;
+module.exports = RelFeedTag;
