@@ -71,20 +71,28 @@ const ownFeedList = withAuth({
     },
   },
   resolve: async (root, args, { auth, ctx, models }) => {
-    const { offset, limit } = args;
-    const { FeedModel } = models;
+    const { offset = 0, limit } = args;
+    const { FeedModel, RelUserFeedModel } = models;
+    // 关系表数据
+    const relList = await RelUserFeedModel.findAll({
+      where: {
+        userId: auth.id,
+      },
+      ...(typeof limit === 'number' ? { offset, limit } : { offset }),
+    });
+    // 根据关系表数据，获得自己的订阅
     return FeedModel.findAndCountAll({
       where: {
-        id: auth.id,
+        id: {
+          [Sequelize.Op.in]: relList.map(rel => rel.feedId),
+        },
       },
-      offset,
-      limit,
     });
   },
 });
 
 const feedListOfUser = {
-  type: new GraphQLList(FeedType),
+  type: FeedPaginationType,
   args: {
     id: {
       type: new GraphQLNonNull(GraphQLID),
@@ -100,14 +108,18 @@ const feedListOfUser = {
     },
   },
   resolve: async (root, args, { ctx, models }) => {
-    const { id, offset, limit } = args;
-    const { FeedModel } = models;
+    const { id, offset = 0, limit } = args;
+    const { RelUserFeedModel, FeedModel } = models;
+    const relList = await RelUserFeedModel.findAll({
+      where: { userId: id },
+      ...(typeof limit === 'number' ? { offset, limit } : { offset }),
+    });
     return FeedModel.findAndCountAll({
       where: {
-        id,
+        id: {
+          [Sequelize.Op.in]: relList.map(rel => rel.feedId),
+        },
       },
-      offset,
-      limit,
     });
   },
 };
@@ -169,17 +181,22 @@ const addOrCreateFeedForOwner = withAuth({
 const deleteOwnerFeed = withAuth({
   type: FeedType,
   args: {
-    id: {
+    link: {
       type: GraphQLID,
     },
   },
   resolve: async (root, args, { models, auth }) => {
-    const { id } = args;
+    const { link } = args;
     const { RelUserFeedModel, FeedModel } = models;
-    const rel = await RelUserFeedModel.findOne({ where: { id } });
-    const delFeed = await FeedModel.findOne({ where: { id: rel.feedId } });
-    await rel.destroy();
-    return delFeed;
+    const delFeed = await FeedModel.findOne({ where: { link } });
+    const affected = await RelUserFeedModel.destroy({
+      where: { feedId: delFeed.id, userId: auth.id },
+    });
+    if (affected) {
+      return delFeed;
+    } else {
+      throw new Error(`Delete error, ${affected} row affected`);
+    }
   },
 });
 

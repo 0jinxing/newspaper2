@@ -87,7 +87,7 @@ const modifyProfile = withAuth({
   },
 });
 
-const registerUser = {
+const signupUser = {
   type: SigninPayload,
   args: {
     email: {
@@ -166,7 +166,7 @@ module.exports = {
   SigninPayload,
   query: { profile },
   mutation: {
-    registerUser,
+    signupUser,
     signinUser,
     modifyProfile,
     checkEmail,
