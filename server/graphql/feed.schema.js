@@ -35,7 +35,7 @@ const FeedType = new GraphQLObjectType({
 const FeedPaginationType = createPaginationType(FeedType, 'FeedPagination');
 
 // query
-const allFeedList = {
+const allFeeds = {
   type: FeedPaginationType,
   args: {
     offset: {
@@ -94,7 +94,7 @@ const ownFeedList = withAuth({
 const feedListOfUser = {
   type: FeedPaginationType,
   args: {
-    id: {
+    userId: {
       type: new GraphQLNonNull(GraphQLID),
     },
     offset: {
@@ -108,10 +108,10 @@ const feedListOfUser = {
     },
   },
   resolve: async (root, args, { ctx, models }) => {
-    const { id, offset = 0, limit } = args;
+    const { userId, offset = 0, limit } = args;
     const { RelUserFeedModel, FeedModel } = models;
     const relList = await RelUserFeedModel.findAll({
-      where: { userId: id },
+      where: { userId },
       ...(typeof limit === 'number' ? { offset, limit } : { offset }),
     });
     return FeedModel.findAndCountAll({
@@ -182,7 +182,7 @@ const deleteOwnerFeed = withAuth({
   type: FeedType,
   args: {
     link: {
-      type: GraphQLID,
+      type: GraphQLString,
     },
   },
   resolve: async (root, args, { models, auth }) => {
@@ -204,7 +204,7 @@ module.exports = {
   FeedType,
   FeedPaginationType,
   query: {
-    allFeedList,
+    allFeeds,
     ownFeedList,
     feedListOfUser,
   },
