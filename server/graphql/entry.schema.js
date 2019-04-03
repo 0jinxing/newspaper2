@@ -1,16 +1,19 @@
 const { GraphQLID, GraphQLInt, GraphQLString, GraphQLObjectType } = require('graphql');
 const Sequelize = require('sequelize');
 const DateType = require('./date.scalar');
-const { FeedType } = require('./feed.schema');
+const { SiteType } = require('./site.schema');
 const { withAuth } = require('../utils/auth');
 const createPaginationType = require('../utils/create-pagination-type');
 
-const EntryPaginationType = createPaginationType(FeedType, 'EntryPagination');
+const EntryPaginationType = createPaginationType(SiteType, 'EntryPagination');
 
 const EntryType = new GraphQLObjectType({
   name: 'Entry',
   fields: {
     id: {
+      type: GraphQLID,
+    },
+    siteId: {
       type: GraphQLID,
     },
     title: {
@@ -25,7 +28,6 @@ const EntryType = new GraphQLObjectType({
     content: {
       type: GraphQLString,
     },
-    source: FeedType,
   },
 });
 
@@ -46,10 +48,10 @@ const allEntries = {
   },
 };
 
-const entryListOfFeed = {
+const entryListOfSite = {
   type: EntryPaginationType,
   args: {
-    feedId: {
+    siteId: {
       type: GraphQLID,
     },
     offset: {
@@ -61,15 +63,15 @@ const entryListOfFeed = {
   },
   resolve: async (root, args, { ctx, auth, db, models }) => {
     const { EntryModel } = models;
-    const { feedId, offset = 0, limit } = args;
+    const { siteId, offset = 0, limit } = args;
     return EntryModel.findAndCountAll({
-      where: { feedId },
+      where: { siteId },
       ...(typeof limit === 'number' ? { offset, limit } : { offset }),
     });
   },
 };
 
-const ownerEntryList = withAuth({
+const ownEntryList = withAuth({
   type: EntryPaginationType,
   args: {
     offset: {
@@ -81,15 +83,15 @@ const ownerEntryList = withAuth({
   },
   resolve: async (root, args, { auth, models }) => {
     const { offset = 0, limit } = args;
-    const { RelUserFeedModel, EntryModel } = models;
+    const { RelUserSiteModel, EntryModel } = models;
     const { id: userId } = auth;
-    const relList = await RelUserFeedModel.findAll({
+    const relList = await RelUserSiteModel.findAll({
       where: { userId },
     });
     return EntryModel.findAndCountAll({
       where: {
-        feedId: {
-          [Sequelize.Op.in]: relList.map(rel => rel.feedId),
+        siteId: {
+          [Sequelize.Op.in]: relList.map(rel => rel.siteId),
         },
       },
       ...(typeof limit === 'number' ? { offset, limit } : { offset }),
@@ -99,9 +101,10 @@ const ownerEntryList = withAuth({
 
 module.exports = {
   EntryType,
+  EntryPaginationType,
   query: {
     allEntries,
-    entryListOfFeed,
-    ownerEntryList,
+    entryListOfSite,
+    ownEntryList,
   },
 };

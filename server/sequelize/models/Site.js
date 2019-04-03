@@ -1,13 +1,18 @@
 const { STRING, INTEGER, DATE } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const Feed = sequelize.define(
-  'feed',
+const Site = sequelize.define(
+  'site',
   {
     id: {
       type: INTEGER.UNSIGNED,
       primaryKey: true,
       autoIncrement: true,
+    },
+    // 网站的拥有者，不是订阅者
+    userId: {
+      type: INTEGER.UNSIGNED,
+      field: 'user_id',
     },
     link: {
       type: STRING,
@@ -23,7 +28,7 @@ const Feed = sequelize.define(
     },
     updated: {
       type: DATE,
-      commit: '`Feed` 更新时间，区别于 update_at',
+      commit: '`site` 更新时间，区别于 update_at',
     },
   },
   {
@@ -31,4 +36,4 @@ const Feed = sequelize.define(
   }
 );
 
-module.exports = Feed;
+module.exports = Site;

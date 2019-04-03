@@ -33,9 +33,9 @@ const Entry = sequelize.define(
     snippet: {
       type: TEXT,
     },
-    feedId: {
+    siteId: {
       type: INTEGER.UNSIGNED,
-      field: 'feed_id',
+      field: 'site_id',
       allowNull: false,
     },
   },

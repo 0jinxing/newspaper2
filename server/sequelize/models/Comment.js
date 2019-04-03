@@ -1,4 +1,4 @@
-const { INTEGER, TEXT, STRING } = require('sequelize');
+const { INTEGER, TEXT, STRING, BOOLEAN } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Comment = sequelize.define(
@@ -9,9 +9,14 @@ const Comment = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    content: {
-      type: TEXT,
+    userId: {
+      type: INTEGER.UNSIGNED,
       allowNull: false,
+      field: 'user_id',
+    },
+    replyId: {
+      type: INTEGER.UNSIGNED,
+      field: 'reply_id',
     },
     link: {
       type: STRING,
@@ -19,6 +24,15 @@ const Comment = sequelize.define(
       validate: {
         isUrl: true,
       },
+    },
+    content: {
+      type: TEXT,
+      allowNull: false,
+    },
+    accepted: {
+      type: BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

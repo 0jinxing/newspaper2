@@ -1,7 +1,6 @@
 const {
   GraphQLID,
   GraphQLString,
-  GraphQLList,
   GraphQLInt,
   GraphQLNonNull,
   GraphQLObjectType,
@@ -14,10 +13,13 @@ const LongType = require('./long.scalar');
 const createPaginationType = require('../utils/create-pagination-type');
 const { withAuth } = require('../utils/auth');
 
-const FeedType = new GraphQLObjectType({
-  name: 'Feed',
+const SiteType = new GraphQLObjectType({
+  name: 'Site',
   fields: {
     id: {
+      type: GraphQLID,
+    },
+    userId: {
       type: GraphQLID,
     },
     link: {
@@ -32,11 +34,11 @@ const FeedType = new GraphQLObjectType({
   },
 });
 
-const FeedPaginationType = createPaginationType(FeedType, 'FeedPagination');
+const SitePaginationType = createPaginationType(SiteType, 'SitePagination');
 
 // query
-const allFeeds = {
-  type: FeedPaginationType,
+const allSites = {
+  type: SitePaginationType,
   args: {
     offset: {
       type: GraphQLInt,
@@ -50,15 +52,15 @@ const allFeeds = {
   },
   resolve: async (root, args, { ctx, models }) => {
     const { offset = 0, limit } = args;
-    const { FeedModel } = models;
+    const { SiteModel } = models;
     return limit
-      ? FeedModel.findAndCountAll({ offset, limit })
-      : FeedModel.findAndCountAll({ offset });
+      ? SiteModel.findAndCountAll({ offset, limit })
+      : SiteModel.findAndCountAll({ offset });
   },
 };
 
-const ownFeedList = withAuth({
-  type: FeedPaginationType,
+const ownSubscriptionList = withAuth({
+  type: SitePaginationType,
   args: {
     offset: {
       type: GraphQLInt,
@@ -72,27 +74,27 @@ const ownFeedList = withAuth({
   },
   resolve: async (root, args, { auth, ctx, models }) => {
     const { offset = 0, limit } = args;
-    const { FeedModel, RelUserFeedModel } = models;
+    const { SiteModel, RelUserSiteModel } = models;
     // 关系表数据
-    const relList = await RelUserFeedModel.findAll({
+    const relList = await RelUserSiteModel.findAll({
       where: {
         userId: auth.id,
       },
       ...(typeof limit === 'number' ? { offset, limit } : { offset }),
     });
     // 根据关系表数据，获得自己的订阅
-    return FeedModel.findAndCountAll({
+    return SiteModel.findAndCountAll({
       where: {
         id: {
-          [Sequelize.Op.in]: relList.map(rel => rel.feedId),
+          [Sequelize.Op.in]: relList.map(rel => rel.siteId),
         },
       },
     });
   },
 });
 
-const feedListOfUser = {
-  type: FeedPaginationType,
+const subscriptionListListOfUser = {
+  type: SitePaginationType,
   args: {
     userId: {
       type: new GraphQLNonNull(GraphQLID),
@@ -109,15 +111,15 @@ const feedListOfUser = {
   },
   resolve: async (root, args, { ctx, models }) => {
     const { userId, offset = 0, limit } = args;
-    const { RelUserFeedModel, FeedModel } = models;
-    const relList = await RelUserFeedModel.findAll({
+    const { RelUserSiteModel, SiteModel } = models;
+    const relList = await RelUserSiteModel.findAll({
       where: { userId },
       ...(typeof limit === 'number' ? { offset, limit } : { offset }),
     });
-    return FeedModel.findAndCountAll({
+    return SiteModel.findAndCountAll({
       where: {
         id: {
-          [Sequelize.Op.in]: relList.map(rel => rel.feedId),
+          [Sequelize.Op.in]: relList.map(rel => rel.siteId),
         },
       },
     });
@@ -125,8 +127,8 @@ const feedListOfUser = {
 };
 
 // mutation
-const addOrCreateFeedForOwner = withAuth({
-  type: FeedType,
+const addOrCreateSiteForMe = withAuth({
+  type: SiteType,
   args: {
     link: {
       type: GraphQLString,
@@ -134,12 +136,12 @@ const addOrCreateFeedForOwner = withAuth({
   },
   resolve: async (root, args, { auth, ctx, models, db }) => {
     const { link } = args;
-    const { FeedModel, RelUserFeedModel, EntryModel } = models;
+    const { SiteModel, RelUserSiteModel, EntryModel } = models;
     return db.transaction(async t => {
       const { id: userId } = auth;
       const parser = new RssParser();
       const parseResult = await parser.parseURL(link);
-      const [existOrNewFeed, created] = await FeedModel.findOrCreate({
+      const [existOrNewSite, created] = await SiteModel.findOrCreate({
         where: { link },
         defaults: { title: parseResult.title, updated: +moment(parseResult.lastBuildDate) },
         transaction: t,
@@ -151,10 +153,10 @@ const addOrCreateFeedForOwner = withAuth({
         updated: +moment(item.isoDate),
         content: item.content,
         snippet: item.contentSnippet,
-        feedId: existOrNewFeed.id,
+        siteId: existOrNewSite.id,
       }));
       if (created) {
-        // 新建 feed，全部插入
+        // 新建 site，全部插入
         EntryModel.bulkCreate(enterObjectArray, { transaction: t });
       } else {
         // 删除旧的，插入新的
@@ -169,17 +171,17 @@ const addOrCreateFeedForOwner = withAuth({
         await EntryModel.bulkCreate(enterObjectArray, { transaction: t });
       }
       // 创建对应记录（存在则不创建）
-      await RelUserFeedModel.findOrCreate({
-        where: { userId, feedId: existOrNewFeed.id },
+      await RelUserSiteModel.findOrCreate({
+        where: { userId, siteId: existOrNewSite.id },
         transaction: t,
       });
-      return existOrNewFeed;
+      return existOrNewSite;
     });
   },
 });
 
-const deleteOwnerFeed = withAuth({
-  type: FeedType,
+const deleteOwnSite = withAuth({
+  type: SiteType,
   args: {
     link: {
       type: GraphQLString,
@@ -187,13 +189,13 @@ const deleteOwnerFeed = withAuth({
   },
   resolve: async (root, args, { models, auth }) => {
     const { link } = args;
-    const { RelUserFeedModel, FeedModel } = models;
-    const delFeed = await FeedModel.findOne({ where: { link } });
-    const affected = await RelUserFeedModel.destroy({
-      where: { feedId: delFeed.id, userId: auth.id },
+    const { RelUserSiteModel, SiteModel } = models;
+    const delSite = await SiteModel.findOne({ where: { link } });
+    const affected = await RelUserSiteModel.destroy({
+      where: { siteId: delSite.id, userId: auth.id },
     });
     if (affected) {
-      return delFeed;
+      return delSite;
     } else {
       throw new Error(`Delete error, ${affected} row affected`);
     }
@@ -201,15 +203,15 @@ const deleteOwnerFeed = withAuth({
 });
 
 module.exports = {
-  FeedType,
-  FeedPaginationType,
+  SiteType,
+  SitePaginationType,
   query: {
-    allFeeds,
-    ownFeedList,
-    feedListOfUser,
+    allSites,
+    ownSubscriptionList,
+    subscriptionListListOfUser,
   },
   mutation: {
-    addOrCreateFeedForOwner,
-    deleteOwnerFeed,
+    addOrCreateSiteForMe,
+    deleteOwnSite,
   },
 };

@@ -1,8 +1,8 @@
 const { INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const RelUserFeed = sequelize.define(
-  'relUserFeed',
+const RelUserSite = sequelize.define(
+  'relUserSite',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -14,10 +14,10 @@ const RelUserFeed = sequelize.define(
       allowNull: false,
       field: 'user_id',
     },
-    feedId: {
+    siteId: {
       type: INTEGER.UNSIGNED,
       allowNull: false,
-      field: 'feed_id',
+      field: 'site_id',
     },
   },
   {
@@ -26,12 +26,12 @@ const RelUserFeed = sequelize.define(
         fields: ['user_id'],
       },
       {
-        fields: ['feed_id'],
+        fields: ['site_id'],
       },
     ],
     freezeTableName: true,
-    tableName: 'rel_user_feed',
+    tableName: 'rel_user_site',
   }
 );
 
-module.exports = RelUserFeed;
+module.exports = RelUserSite;

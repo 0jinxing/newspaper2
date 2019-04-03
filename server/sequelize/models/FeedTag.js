@@ -1,18 +1,18 @@
 const { INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const RelFeedTag = sequelize.define(
-  'relFeedTag',
+const RelSiteTag = sequelize.define(
+  'relSiteTag',
   {
     id: {
       type: INTEGER.UNSIGNED,
       primaryKey: true,
       autoIncrement: true,
     },
-    feedId: {
+    siteId: {
       type: INTEGER.UNSIGNED,
       allowNull: false,
-      field: 'feed_id',
+      field: 'site_id',
     },
     tagId: {
       type: INTEGER.UNSIGNED,
@@ -23,15 +23,15 @@ const RelFeedTag = sequelize.define(
   {
     indexes: [
       {
-        fields: ['feed_id'],
+        fields: ['site_id'],
       },
       {
         fields: ['tag_id'],
       },
     ],
     freezeTableName: true,
-    tableName: 'rel_feed_tag',
+    tableName: 'rel_site_tag',
   }
 );
 
-module.exports = RelFeedTag;
+module.exports = RelSiteTag;
