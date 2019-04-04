@@ -154,7 +154,7 @@ const toMeUnacceptedComment = withAuth({
 });
 
 // mutation
-const createComment = withAuth({
+const createCommentOrReply = withAuth({
   type: CommentType,
   args: {
     link: {
@@ -163,20 +163,24 @@ const createComment = withAuth({
     content: {
       type: GraphQLString,
     },
+    replyId: {
+      type: GraphQLID,
+    },
   },
   resolve: async (root, args, { models }) => {
-    const { link, content } = args;
+    const { link, content, replyId } = args;
     const { id: userId } = auth;
     const { CommentModel } = models;
     return CommentModel.create({
       userId,
       link,
       content,
+      replyId,
     });
   },
 });
 
-const deleteOwnComment = withAuth({
+const deleteOwnCommentOrReply = withAuth({
   type: CommentType,
   args: {
     id: {
@@ -198,32 +202,6 @@ const deleteOwnComment = withAuth({
   },
 });
 
-const replyComment = withAuth({
-  type: CommentType,
-  args: {
-    replyId: {
-      type: GraphQLID,
-    },
-    link: {
-      type: GraphQLString,
-    },
-    content: {
-      type: GraphQLString,
-    },
-  },
-  resolve: async (root, args, { models, auth }) => {
-    const { replyId, link, content } = args;
-    const { id: userId } = auth;
-    const { CommentModel } = models;
-    return CommentModel.create({
-      link,
-      replyId,
-      userId,
-      content,
-    });
-  },
-});
-
 module.exports = {
   CommentType,
   CommentPaginationType,
@@ -235,8 +213,7 @@ module.exports = {
     toMeUnacceptedComment,
   },
   mutation: {
-    createComment,
-    deleteOwnComment,
-    replyComment,
+    createCommentOrReply,
+    deleteOwnCommentOrReply,
   },
 };

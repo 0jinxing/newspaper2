@@ -22,6 +22,13 @@ const Site = sequelize.define(
         isUrl: true,
       },
     },
+    favicon: {
+      type: STRING,
+      allowNull: false,
+      validate: {
+        isUrl: true,
+      },
+    },
     title: {
       type: STRING,
       allowNull: false,

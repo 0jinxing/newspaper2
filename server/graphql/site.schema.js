@@ -12,6 +12,7 @@ const DateType = require('./date.scalar');
 const LongType = require('./long.scalar');
 const createPaginationType = require('../utils/create-pagination-type');
 const { withAuth } = require('../utils/auth');
+const getFavicon = require('../utils/get-favicon');
 
 const SiteType = new GraphQLObjectType({
   name: 'Site',
@@ -23,6 +24,9 @@ const SiteType = new GraphQLObjectType({
       type: GraphQLID,
     },
     link: {
+      type: GraphQLString,
+    },
+    favicon: {
       type: GraphQLString,
     },
     title: {
@@ -143,7 +147,11 @@ const addOrCreateSiteForMe = withAuth({
       const parseResult = await parser.parseURL(link);
       const [existOrNewSite, created] = await SiteModel.findOrCreate({
         where: { link },
-        defaults: { title: parseResult.title, updated: +moment(parseResult.lastBuildDate) },
+        defaults: {
+          title: parseResult.title,
+          updated: +moment(parseResult.lastBuildDate),
+          favicon: await getFavicon(link),
+        },
         transaction: t,
       });
       // 转换格式
