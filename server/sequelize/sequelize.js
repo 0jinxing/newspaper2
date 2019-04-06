@@ -1,16 +1,13 @@
 const Sequelize = require('sequelize');
 const logger = require('../logger');
 
-module.exports = new Sequelize('2newspaper', 'root', '123456', {
+module.exports = new Sequelize('2newspaper', 'root', 'root', {
   host: 'localhost',
   dialect: 'mysql',
   define: {
     version: true,
     createdAt: 'created_at',
     updatedAt: 'update_at',
-    // deletedAt: 'deleted_at',
-    // paranoid: true,
   },
-  // logging: logger.info.bind(logger),
   logging: false,
 });
