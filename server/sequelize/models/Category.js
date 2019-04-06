@@ -1,4 +1,4 @@
-const { INTEGER, TEXT, STRING, BOOLEAN } = require('sequelize');
+const { INTEGER, STRING } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Category = sequelize.define('category', {

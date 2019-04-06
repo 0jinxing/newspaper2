@@ -31,6 +31,7 @@ const EntryType = new GraphQLObjectType({
   },
 });
 
+// query
 const allEntries = {
   type: EntryPaginationType,
   args: {
@@ -71,7 +72,7 @@ const entryListOfSite = {
   },
 };
 
-const ownEntryList = withAuth({
+const ownSubscriptionEntryList = withAuth({
   type: EntryPaginationType,
   args: {
     offset: {
@@ -83,11 +84,13 @@ const ownEntryList = withAuth({
   },
   resolve: async (root, args, { auth, models }) => {
     const { offset = 0, limit } = args;
-    const { RelUserSiteModel, EntryModel } = models;
+    const { SubscriptionModel, EntryModel } = models;
     const { id: userId } = auth;
-    const relList = await RelUserSiteModel.findAll({
+    // 拿到订阅 site 列表
+    const relList = await SubscriptionModel.findAll({
       where: { userId },
     });
+    // 根据上面的列表拿到 entry
     return EntryModel.findAndCountAll({
       where: {
         siteId: {
@@ -105,6 +108,6 @@ module.exports = {
   query: {
     allEntries,
     entryListOfSite,
-    ownEntryList,
+    ownSubscriptionEntryList,
   },
 };

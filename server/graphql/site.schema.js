@@ -9,7 +9,6 @@ const Sequelize = require('sequelize');
 const moment = require('moment');
 const RssParser = require('rss-parser');
 const DateType = require('./date.scalar');
-const LongType = require('./long.scalar');
 const createPaginationType = require('../utils/create-pagination-type');
 const { withAuth } = require('../utils/auth');
 const getFavicon = require('../utils/get-favicon');
@@ -50,9 +49,6 @@ const allSites = {
     limit: {
       type: GraphQLInt,
     },
-    timestamp: {
-      type: LongType,
-    },
   },
   resolve: async (root, args, { ctx, models }) => {
     const { offset = 0, limit } = args;
@@ -63,6 +59,7 @@ const allSites = {
   },
 };
 
+// 获得自己的订阅列表
 const ownSubscriptionList = withAuth({
   type: SitePaginationType,
   args: {
@@ -72,15 +69,12 @@ const ownSubscriptionList = withAuth({
     limit: {
       type: GraphQLInt,
     },
-    timestamp: {
-      type: LongType,
-    },
   },
   resolve: async (root, args, { auth, ctx, models }) => {
     const { offset = 0, limit } = args;
-    const { SiteModel, RelUserSiteModel } = models;
+    const { SiteModel, SubscriptionModel } = models;
     // 关系表数据
-    const relList = await RelUserSiteModel.findAll({
+    const relList = await SubscriptionModel.findAll({
       where: {
         userId: auth.id,
       },
@@ -97,6 +91,7 @@ const ownSubscriptionList = withAuth({
   },
 });
 
+// 获得某个用户的订阅列表
 const subscriptionListListOfUser = {
   type: SitePaginationType,
   args: {
@@ -109,14 +104,11 @@ const subscriptionListListOfUser = {
     limit: {
       type: GraphQLInt,
     },
-    timestamp: {
-      type: LongType,
-    },
   },
   resolve: async (root, args, { ctx, models }) => {
     const { userId, offset = 0, limit } = args;
-    const { RelUserSiteModel, SiteModel } = models;
-    const relList = await RelUserSiteModel.findAll({
+    const { SubscriptionModel, SiteModel } = models;
+    const relList = await SubscriptionModel.findAll({
       where: { userId },
       ...(typeof limit === 'number' ? { offset, limit } : { offset }),
     });
@@ -131,7 +123,8 @@ const subscriptionListListOfUser = {
 };
 
 // mutation
-const addOrCreateSiteForMe = withAuth({
+// 订阅网站
+const subscribeSite = withAuth({
   type: SiteType,
   args: {
     link: {
@@ -140,7 +133,7 @@ const addOrCreateSiteForMe = withAuth({
   },
   resolve: async (root, args, { auth, ctx, models, db }) => {
     const { link } = args;
-    const { SiteModel, RelUserSiteModel, EntryModel } = models;
+    const { SiteModel, SubscriptionModel, EntryModel } = models;
     return db.transaction(async t => {
       const { id: userId } = auth;
       const parser = new RssParser();
@@ -158,8 +151,8 @@ const addOrCreateSiteForMe = withAuth({
       const enterObjectArray = parseResult.items.map(item => ({
         title: item.title,
         link: item.link,
-        updated: +moment(item.isoDate),
         content: item.content,
+        updated: +moment(item.isoDate),
         snippet: item.contentSnippet,
         siteId: existOrNewSite.id,
       }));
@@ -167,7 +160,7 @@ const addOrCreateSiteForMe = withAuth({
         // 新建 site，全部插入
         EntryModel.bulkCreate(enterObjectArray, { transaction: t });
       } else {
-        // 删除旧的，插入新的
+        // 删除旧的
         await EntryModel.destroy(
           {
             where: {
@@ -176,10 +169,15 @@ const addOrCreateSiteForMe = withAuth({
           },
           { transaction: t }
         );
+        // 插入新的
         await EntryModel.bulkCreate(enterObjectArray, { transaction: t });
+        // 更新对应 site 的 updated
+        await existOrNewSite.update({
+          updated: +moment(parseResult.lastBuildDate),
+        });
       }
       // 创建对应记录（存在则不创建）
-      await RelUserSiteModel.findOrCreate({
+      await SubscriptionModel.findOrCreate({
         where: { userId, siteId: existOrNewSite.id },
         transaction: t,
       });
@@ -188,27 +186,32 @@ const addOrCreateSiteForMe = withAuth({
   },
 });
 
-const deleteOwnSite = withAuth({
+// 取消订阅网站
+const unsubscribeSite = withAuth({
   type: SiteType,
   args: {
-    link: {
-      type: GraphQLString,
+    id: {
+      type: GraphQLID,
     },
   },
   resolve: async (root, args, { models, auth }) => {
-    const { link } = args;
-    const { RelUserSiteModel, SiteModel } = models;
-    const delSite = await SiteModel.findOne({ where: { link } });
-    const affected = await RelUserSiteModel.destroy({
-      where: { siteId: delSite.id, userId: auth.id },
+    const { id } = args;
+    const { SubscriptionModel, SiteModel } = models;
+    const currentSite = await SiteModel.findOne({ where: { id } });
+    const affected = await SubscriptionModel.destroy({
+      where: { siteId: currentSite.id, userId: auth.id },
     });
     if (affected) {
-      return delSite;
+      return currentSite;
     } else {
       throw new Error(`Delete error, ${affected} row affected`);
     }
   },
 });
+
+// @TODO
+// 创建一个自己的网站（生成一个 app_token）
+// 删除自己的网站
 
 module.exports = {
   SiteType,
@@ -219,7 +222,7 @@ module.exports = {
     subscriptionListListOfUser,
   },
   mutation: {
-    addOrCreateSiteForMe,
-    deleteOwnSite,
+    subscribeSite,
+    unsubscribeSite,
   },
 };

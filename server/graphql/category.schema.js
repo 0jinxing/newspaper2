@@ -81,8 +81,25 @@ const deleteCategory = withAuth({
     id: {
       type: GraphQLID,
     },
+    // 在分类存在内容时，非强制删除失败，强制则删除该分类下的所有内容
+    force: {
+      type: GraphQLBoolean,
+    },
   },
-  resolve: async (root, args, { models, auth }) => {},
+  resolve: async (root, args, { models, auth }) => {
+    const { id, force } = args;
+    const { id: userId } = auth;
+    const { CategoryModel } = models;
+    const category = await CategoryModel.findOne({
+      where: {
+        userId,
+        id,
+      },
+    });
+    const hasChildren = await CategoryModel.findAll({
+      where: { parentId: id },
+    });
+  },
 });
 
 module.exports = {

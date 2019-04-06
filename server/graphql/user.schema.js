@@ -65,6 +65,9 @@ const profile = withAuth({
 const modifyProfile = withAuth({
   type: UserType,
   args: {
+    avatar: {
+      type: GraphQLString,
+    },
     username: {
       type: GraphQLString,
     },
@@ -76,10 +79,11 @@ const modifyProfile = withAuth({
     },
   },
   resolve: async (root, args, { auth, ctx, db, models }) => {
-    const { username, wechat, github } = args;
+    const { avatar, username, wechat, github } = args;
     const { UserModel } = models;
     const currentUser = await UserModel.findOne({ where: { id: auth.id } });
     currentUser.username = username ? username : currentUser.username;
+    currentUser.avatar = avatar ? avatar : currentUser.avatar;
     currentUser.wechat = wechat ? wechat : currentUser.wechat;
     currentUser.github = github ? github : currentUser.github;
     await currentUser.save();

@@ -1,8 +1,9 @@
 const { INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const RelUserSite = sequelize.define(
-  'relUserSite',
+// 关系表
+const Subscription = sequelize.define(
+  'subscription',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -29,9 +30,7 @@ const RelUserSite = sequelize.define(
         fields: ['site_id'],
       },
     ],
-    freezeTableName: true,
-    tableName: 'rel_user_site',
   }
 );
 
-module.exports = RelUserSite;
+module.exports = Subscription;

@@ -14,16 +14,13 @@ const Comment = sequelize.define(
       allowNull: false,
       field: 'user_id',
     },
+    entryId: {
+      type: INTEGER.UNSIGNED,
+      field: 'entry_id',
+    },
     replyId: {
       type: INTEGER.UNSIGNED,
       field: 'reply_id',
-    },
-    link: {
-      type: STRING,
-      allowNull: false,
-      validate: {
-        isUrl: true,
-      },
     },
     content: {
       type: TEXT,
@@ -38,7 +35,13 @@ const Comment = sequelize.define(
   {
     indexes: [
       {
-        fields: ['link'],
+        fields: ['user_id'],
+      },
+      {
+        fields: ['entry_id'],
+      },
+      {
+        fields: ['reply_id'],
       },
     ],
   }
