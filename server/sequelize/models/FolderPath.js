@@ -16,7 +16,7 @@ const FolderPath = sequelize.define('folder_path', {
     type: INTEGER.UNSIGNED,
     allowNull: false,
   },
-  distance: {
+  depth: {
     type: INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
