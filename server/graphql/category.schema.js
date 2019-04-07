@@ -5,7 +5,6 @@ const {
   GraphQLBoolean,
   GraphQLObjectType,
 } = require('graphql');
-const Sequelize = require('sequelize');
 const { withAuth } = require('../utils/auth');
 const createPaginationType = require('../utils/create-pagination-type');
 
@@ -40,7 +39,8 @@ const ownCategories = withAuth({
   resolve: async (root, args, { models, auth }) => {
     const { offset, limit } = args;
     const { id: userId } = auth;
-    const { CategoryModel } = models;
+    const { CategoryModel, CategoryPathModel } = models;
+    
     CategoryModel.findAndCountAll({
       where: {
         userId,
