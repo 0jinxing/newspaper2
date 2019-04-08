@@ -2,7 +2,7 @@ const { INTEGER, TEXT, STRING, BOOLEAN } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Comment = sequelize.define(
-  'comment',
+  'Comment',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -12,15 +12,12 @@ const Comment = sequelize.define(
     userId: {
       type: INTEGER.UNSIGNED,
       allowNull: false,
-      field: 'user_id',
     },
     entryId: {
       type: INTEGER.UNSIGNED,
-      field: 'entry_id',
     },
     replyId: {
       type: INTEGER.UNSIGNED,
-      field: 'reply_id',
     },
     content: {
       type: TEXT,

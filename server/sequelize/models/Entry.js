@@ -2,7 +2,7 @@ const { STRING, TEXT, INTEGER, DATE } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Entry = sequelize.define(
-  'entry',
+  'Entry',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -35,7 +35,6 @@ const Entry = sequelize.define(
     },
     siteId: {
       type: INTEGER.UNSIGNED,
-      field: 'site_id',
       allowNull: false,
     },
   },

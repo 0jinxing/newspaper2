@@ -1,7 +1,7 @@
 const { STRING, INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const User = sequelize.define('user', {
+const User = sequelize.define('User', {
   id: {
     type: INTEGER.UNSIGNED,
     primaryKey: true,

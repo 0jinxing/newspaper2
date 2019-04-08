@@ -1,7 +1,7 @@
 const { INTEGER, STRING } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const Folder = sequelize.define('folder', {
+const Folder = sequelize.define('Folder', {
   id: {
     type: INTEGER.UNSIGNED,
     primaryKey: true,

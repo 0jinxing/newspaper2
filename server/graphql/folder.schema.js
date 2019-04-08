@@ -5,7 +5,9 @@ const {
   GraphQLBoolean,
   GraphQLObjectType,
   GraphQLList,
+  GraphQLUnionType,
 } = require('graphql');
+const { SiteType } = require('./site.schema');
 const { withAuth } = require('../utils/auth');
 
 const FolderType = new GraphQLObjectType({
@@ -20,12 +22,23 @@ const FolderType = new GraphQLObjectType({
   },
 });
 
+// folder or site 可以存在于根目录
+const FolderItemType = new GraphQLUnionType({
+  name: 'FolderItem',
+  types: [SiteType, FolderType],
+});
+
 // query
 const ownRootFolders = withAuth({
   type: FolderType,
   resolve: async (root, args, { models, auth }) => {
     const { id: userId } = auth;
     const { FolderModel, FolderPathModel } = models;
+    const root = await FolderModel.findAll({
+      where: {
+        userId
+      }
+    })
     const allPath = await FolderPathModel.findAll({
       where: {
         userId,
@@ -38,7 +51,14 @@ const ownRootFolders = withAuth({
 
 const ownSubFolders = withAuth({
   type: FolderType,
-  resolve: async () => {},
+  args: {
+    folderId: {
+      type: GraphQLID,
+    },
+  },
+  resolve: async (root, args, { models, auth }) => {
+    // const 
+  },
 });
 
 module.exports = {

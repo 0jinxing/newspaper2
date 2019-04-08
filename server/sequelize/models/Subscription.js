@@ -3,7 +3,7 @@ const sequelize = require('../sequelize');
 
 // 关系表
 const Subscription = sequelize.define(
-  'subscription',
+  'Subscription',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -13,12 +13,10 @@ const Subscription = sequelize.define(
     userId: {
       type: INTEGER.UNSIGNED,
       allowNull: false,
-      field: 'user_id',
     },
     siteId: {
       type: INTEGER.UNSIGNED,
       allowNull: false,
-      field: 'site_id',
     },
   },
   {

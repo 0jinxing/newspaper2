@@ -1,7 +1,7 @@
 const { INTEGER } = require('sequelize');
 const sequelize = require('../sequelize');
 
-const Like = sequelize.define('like', {
+const Like = sequelize.define('Like', {
   id: {
     type: INTEGER.UNSIGNED,
     primaryKey: true,
@@ -10,16 +10,13 @@ const Like = sequelize.define('like', {
   userId: {
     type: INTEGER.UNSIGNED,
     allowNull: false,
-    field: 'user_id',
   },
   siteId: {
     type: INTEGER.UNSIGNED,
     allowNull: false,
-    field: 'site_id',
   },
   commitId: {
     type: INTEGER.UNSIGNED,
-    field: 'commit_id',
   },
 });
 

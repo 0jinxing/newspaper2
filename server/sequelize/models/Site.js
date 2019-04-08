@@ -2,7 +2,7 @@ const { STRING, INTEGER, DATE } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Site = sequelize.define(
-  'site',
+  'Site',
   {
     id: {
       type: INTEGER.UNSIGNED,
@@ -12,7 +12,6 @@ const Site = sequelize.define(
     // 网站的拥有者，不是订阅者
     userId: {
       type: INTEGER.UNSIGNED,
-      field: 'user_id',
     },
     link: {
       type: STRING,
