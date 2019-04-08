@@ -21,6 +21,11 @@ const FolderPath = sequelize.define('folder_path', {
     allowNull: false,
     defaultValue: 0,
   },
+  folderId: {
+    type: INTEGER.UNSIGNED,
+    allowNull: false,
+    field: 'folder_id',
+  },
   userId: {
     type: INTEGER.UNSIGNED,
     allowNull: false,
