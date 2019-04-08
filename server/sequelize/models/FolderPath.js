@@ -26,6 +26,11 @@ const FolderPath = sequelize.define('FolderPath', {
     type: INTEGER.UNSIGNED,
     allowNull: false,
   },
+  isRoot: {
+    type: BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
   isSite: {
     type: BOOLEAN,
     // @ true? descendant = site_id: folder_id
