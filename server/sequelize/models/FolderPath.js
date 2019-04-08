@@ -12,6 +12,7 @@ const FolderPath = sequelize.define('folder_path', {
     type: INTEGER.UNSIGNED,
     allowNull: false,
   },
+  // 子节点（可以方便理解为当前理解）
   descendant: {
     type: INTEGER.UNSIGNED,
     allowNull: false,
@@ -21,21 +22,10 @@ const FolderPath = sequelize.define('folder_path', {
     allowNull: false,
     defaultValue: 0,
   },
-  folderId: {
-    type: INTEGER.UNSIGNED,
-    allowNull: false,
-    field: 'folder_id',
-  },
   userId: {
     type: INTEGER.UNSIGNED,
     allowNull: false,
     field: 'user_id',
-  },
-  isRoot: {
-    type: BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-    field: 'is_root',
   },
   isSite: {
     type: BOOLEAN,

@@ -14,6 +14,7 @@ const Like = sequelize.define('like', {
   },
   siteId: {
     type: INTEGER.UNSIGNED,
+    allowNull: false,
     field: 'site_id',
   },
   commitId: {
