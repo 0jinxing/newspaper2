@@ -5,6 +5,7 @@ import { Mutation, Query } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card, Menu } from 'antd';
 import gql from 'graphql-tag';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
+import SiderBarMenu from '../components/SiderBarMenu';
 import '../styles/home.less';
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -46,22 +47,7 @@ class HomePage extends Component {
     return (
       // ant-layout-has-sider 解决 ssr 效果延迟
       <Layout className="home-wrap ant-layout-has-sider">
-        <Sider breakpoint="lg" width="260px" style={{ background: '#FFF' }} collapsedWidth={0}>
-          <Menu className="sider-menu" theme="light" mode="inline" defaultSelectedKeys={['start']}>
-            <Menu.Item key="today">
-              <Icon type="calendar" />
-              <span className="nav-text">TODAY</span>
-            </Menu.Item>
-            <Menu.Item key="all">
-              <Icon type="tag" />
-              <span className="nav-text">ALL</span>
-            </Menu.Item>
-            <Menu.Item key="start">
-              <Icon type="star" />
-              <span className="nav-text">START</span>
-            </Menu.Item>
-          </Menu>
-        </Sider>
+        <SiderBarMenu />
         <Layout>
           <Header style={{ backgroundColor: '#fff', padding: 0 }} />
           <Content style={{ margin: '24px 16px 0' }}>
