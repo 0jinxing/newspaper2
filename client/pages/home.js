@@ -44,6 +44,7 @@ const QUERY_SUBSCRIPTION_INFO = gql`
 class HomePage extends Component {
   render() {
     return (
+      // ant-layout-has-sider 解决 ssr 效果延迟
       <Layout className="home-wrap ant-layout-has-sider">
         <Sider breakpoint="lg" width="260px" style={{ background: '#FFF' }} collapsedWidth={0}>
           <Menu className="sider-menu" theme="light" mode="inline" defaultSelectedKeys={['start']}>
