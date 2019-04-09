@@ -37,7 +37,7 @@ export default class SiderMenu extends Component {
           } = loading ? { ownSubscriptionList: {} } : data;
 
           return (
-            <Sider className="sider-menu-wrap" breakpoint="lg" collapsedWidth="0">
+            <Sider className="sider-menu-wrap">
               {loading ? (
                 <SiderMenuLoader/>
               ) : (
