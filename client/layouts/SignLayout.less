@@ -1,40 +1,40 @@
-.sign-wrap {
+.sign-layout-wrap {
   height: 100%;
   background: url(/static/leaves-pattern.png);
-  
-  .sign-form-card {
+
+  .sign-layout-card {
     max-width: 400px;
     margin: 10vh auto;
     padding: 20px 1vh;
     box-shadow: 2px 1px 10px rgba(0, 0, 0, 0.2);
   }
-  
-  .sign-form-forgot {
-    float: right;
-  }
-  
-  .sign-form-button {
-    width: 100%;
-  }
-  
-  .info-wrap {
+
+  .sign-layout-card-header {
     text-align: center;
     margin-bottom: 64px;
+
+    img {
+      width: 64px;
+      margin-bottom: 32px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 18px;
+      margin: 0;
+    }
   }
-  
-  .info-wrap img {
-    width: 64px;
-    margin-bottom: 32px;
-  }
-  
-  .info-wrap h1 {
+  .sign-layout-footer {
     text-align: center;
-    font-size: 18px;
-    margin: 0;
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
-  
+
   @media (max-width: 600px) {
-    .sign-form-card {
+    .sign-layout-card {
       display: flex;
       flex-direction: column;
       justify-content: start;
@@ -43,10 +43,11 @@
       width: 100%;
       min-width: 100%;
       height: 100%;
-      .info-wrap {
+
+      .sign-layout-card-header {
         position: relative;
         top: -4vh;
       }
     }
-  }  
+  }
 }

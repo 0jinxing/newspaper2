@@ -5,11 +5,9 @@ import { Mutation } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
-import '../styles/sign.less';
+import SignLayout from '../layouts/SignLayout';
 
 const FormItem = Form.Item;
-const { Content, Header } = Layout;
-
 const SIGNIN_USER = gql`
   mutation SigninUser($email: String!, $password: String!) {
     signinUser(email: $email, password: $password) {
@@ -51,66 +49,56 @@ class LoginPage extends Component {
         }}
       >
         {(signinUser, { data, loading }) => (
-          <Layout className="sign-wrap">
-            <Content>
-              <Card className="sign-form-card">
-                <div className="info-wrap">
-                  <img src="/static/backpack.png" />
-                  <h1>Sign in to 2Newspaper</h1>
-                </div>
-                <Form
-                  onSubmit={e => {
-                    e.preventDefault();
-                    validateFields((error, values) => {
-                      if (!error) {
-                        const { email, password } = values;
-                        signinUser({ variables: { email, password } });
-                      }
-                    });
-                  }}
+          <SignLayout title="Sign in to 2NEWSPAPER">
+            <Form
+              onSubmit={e => {
+                e.preventDefault();
+                validateFields((error, values) => {
+                  if (!error) {
+                    const { email, password } = values;
+                    signinUser({ variables: { email, password } });
+                  }
+                });
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('email', {
+                  rules: [
+                    { required: true, message: 'Please input your email!' },
+                    { type: 'email', message: '邮箱格式不正确' },
+                  ],
+                })(<Input prefix={<Icon type="link" />} placeholder="Email" />)}
+              </FormItem>
+
+              <FormItem>
+                {getFieldDecorator('password', {
+                  rules: [{ required: true, message: 'Please input your password!' }],
+                })(<Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />)}
+              </FormItem>
+
+              <FormItem>
+                {getFieldDecorator('remember', {
+                  valuePropName: 'checked',
+                  initialValue: true,
+                })(<Checkbox>Remember me</Checkbox>)}
+                <a href="" style={{ float: 'right' }}>
+                  Forgot password
+                </a>
+                <Button
+                  loading={loading}
+                  type="primary"
+                  htmlType="submit"
+                  style={{ width: '100%' }}
                 >
-                  <FormItem>
-                    {getFieldDecorator('email', {
-                      rules: [
-                        { required: true, message: 'Please input your email!' },
-                        { type: 'email', message: '邮箱格式不正确' },
-                      ],
-                    })(<Input prefix={<Icon type="link" />} placeholder="Email" />)}
-                  </FormItem>
-
-                  <FormItem>
-                    {getFieldDecorator('password', {
-                      rules: [{ required: true, message: 'Please input your password!' }],
-                    })(
-                      <Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />
-                    )}
-                  </FormItem>
-
-                  <FormItem>
-                    {getFieldDecorator('remember', {
-                      valuePropName: 'checked',
-                      initialValue: true,
-                    })(<Checkbox>Remember me</Checkbox>)}
-                    <a className="sign-form-forgot" href="">
-                      Forgot password
-                    </a>
-                    <Button
-                      loading={loading}
-                      type="primary"
-                      htmlType="submit"
-                      className="sign-form-button"
-                    >
-                      Sign in
-                    </Button>
-                    Or{' '}
-                    <Link href="/register">
-                      <a>register now!</a>
-                    </Link>
-                  </FormItem>
-                </Form>
-              </Card>
-            </Content>
-          </Layout>
+                  Sign in
+                </Button>
+                Or{' '}
+                <Link href="/register">
+                  <a>register now!</a>
+                </Link>
+              </FormItem>
+            </Form>
+          </SignLayout>
         )}
       </Mutation>
     );

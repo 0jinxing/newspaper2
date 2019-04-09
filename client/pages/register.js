@@ -5,10 +5,10 @@ import router from 'next/router';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
-import '../styles/sign.less';
+import SignLayout from '../layouts/SignLayout';
 
 const FormItem = Form.Item;
-const { Content, Header } = Layout;
+const { Content } = Layout;
 
 const SIGNUP_USER = gql`
   mutation SignupUser($email: String!, $password: String!, $username: String!) {
@@ -51,63 +51,53 @@ class RegisterPage extends Component {
         }}
       >
         {(signupUser, { data, loading }) => (
-          <Layout className="sign-wrap">
-            <Content>
-              <Card className="sign-form-card">
-                <div className="info-wrap">
-                  <img src="/static/backpack.png" />
-                  <h1>Sign up for 2Newspaper</h1>
-                </div>
-                <Form
-                  onSubmit={e => {
-                    e.preventDefault();
-                    validateFields((error, values) => {
-                      if (!error) {
-                        const { email, password, username } = values;
-                        signupUser({ variables: { email, password, username } });
-                      }
-                    });
-                  }}
-                >
-                  <FormItem>
-                    {getFieldDecorator('username', {
-                      rules: [{ required: true, message: 'Please input your username!' }],
-                    })(<Input prefix={<Icon type="user" />} placeholder="Username" />)}
-                  </FormItem>
-                  <FormItem>
-                    {getFieldDecorator('email', {
-                      rules: [
-                        { required: true, message: 'Please input your email!' },
-                        { type: 'email', message: '邮箱格式不正确' },
-                      ],
-                    })(<Input prefix={<Icon type="link" />} placeholder="Email" />)}
-                  </FormItem>
+          <SignLayout title="Sign up for 2NEWSPAPER">
+            <Form
+              onSubmit={e => {
+                e.preventDefault();
+                validateFields((error, values) => {
+                  if (!error) {
+                    const { email, password, username } = values;
+                    signupUser({ variables: { email, password, username } });
+                  }
+                });
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('username', {
+                  rules: [{ required: true, message: 'Please input your username!' }],
+                })(<Input prefix={<Icon type="user" />} placeholder="Username" />)}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('email', {
+                  rules: [
+                    { required: true, message: 'Please input your email!' },
+                    { type: 'email', message: '邮箱格式不正确' },
+                  ],
+                })(<Input prefix={<Icon type="link" />} placeholder="Email" />)}
+              </FormItem>
 
-                  <FormItem>
-                    {getFieldDecorator('password', {
-                      rules: [{ required: true, message: 'Please input your password!' }],
-                    })(
-                      <Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />
-                    )}
-                  </FormItem>
-                  <FormItem>
-                    <Button
-                      loading={loading}
-                      type="primary"
-                      htmlType="submit"
-                      className="sign-form-button"
-                    >
-                      Sign up
-                    </Button>
-                    Or{' '}
-                    <Link href={{ pathname: '/login', query: { name: 1 } }}>
-                      <a>login now!</a>
-                    </Link>
-                  </FormItem>
-                </Form>
-              </Card>
-            </Content>
-          </Layout>
+              <FormItem>
+                {getFieldDecorator('password', {
+                  rules: [{ required: true, message: 'Please input your password!' }],
+                })(<Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />)}
+              </FormItem>
+              <FormItem>
+                <Button
+                  loading={loading}
+                  type="primary"
+                  htmlType="submit"
+                  style={{ width: '100%' }}
+                >
+                  Sign up
+                </Button>
+                Or{' '}
+                <Link href={{ pathname: '/login', query: { name: 1 } }}>
+                  <a>login now!</a>
+                </Link>
+              </FormItem>
+            </Form>
+          </SignLayout>
         )}
       </Mutation>
     );
