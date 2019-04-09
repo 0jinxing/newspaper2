@@ -47,14 +47,11 @@ class LoginPage extends Component {
           setRefreshToken(refreshToken);
           const { redirect_uri } = this.props;
           if (redirect_uri) router.push(redirect_uri);
-          else router.push('/');
+          else router.push('/home');
         }}
       >
         {(signinUser, { data, loading }) => (
           <Layout className="sign-wrap">
-            <Header>
-              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
-            </Header>
             <Content>
               <Card className="sign-form-card">
                 <div className="info-wrap">

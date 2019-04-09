@@ -1,16 +1,18 @@
 import { Component } from 'react';
 import Link from 'next/link';
 import { Mutation } from 'react-apollo';
+import router from 'next/router';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
+import { setAccessToken, setRefreshToken } from '../utils/auth';
 import '../styles/sign.less';
 
 const FormItem = Form.Item;
 const { Content, Header } = Layout;
 
-const SIGNIN_USER = gql`
-  mutation SigninUser($email: String!, $password: String!) {
-    signinUser(email: $email, password: $password) {
+const SIGNUP_USER = gql`
+  mutation SignupUser($email: String!, $password: String!, $username: String!) {
+    signupUser(email: $email, password: $password, username: $username) {
       user {
         email
         username
@@ -25,6 +27,10 @@ const SIGNIN_USER = gql`
 `;
 
 class RegisterPage extends Component {
+  static getInitialProps({ query }) {
+    return { query };
+  }
+
   render() {
     const {
       form: { getFieldDecorator, validateFields },
@@ -32,18 +38,20 @@ class RegisterPage extends Component {
 
     return (
       <Mutation
-        mutation={SIGNIN_USER}
+        mutation={SIGNUP_USER}
         onCompleted={data => {
-          const redirect = this.props.match.params.redirect;
-          if (redirect) router.push(redirect);
-          else router.push('/');
+          const {
+            signupUser: { accessToken, refreshToken },
+          } = data;
+          setAccessToken(accessToken);
+          setRefreshToken(refreshToken);
+          const { redirect_uri } = this.props;
+          if (redirect_uri) router.push(redirect_uri);
+          else router.push('/home');
         }}
       >
-        {(signinUser, { data, loading }) => (
+        {(signupUser, { data, loading }) => (
           <Layout className="sign-wrap">
-            <Header>
-              <p className="sentence">承认自己并非你所以为的那种人，称得上是一种相当可怕的经历。</p>
-            </Header>
             <Content>
               <Card className="sign-form-card">
                 <div className="info-wrap">
@@ -55,8 +63,8 @@ class RegisterPage extends Component {
                     e.preventDefault();
                     validateFields((error, values) => {
                       if (!error) {
-                        const { email, password } = values;
-                        signinUser({ variables: { email, password } });
+                        const { email, password, username } = values;
+                        signupUser({ variables: { email, password, username } });
                       }
                     });
                   }}

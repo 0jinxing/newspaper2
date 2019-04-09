@@ -5,8 +5,6 @@ const { SiteType } = require('./site.schema');
 const { withAuth } = require('../utils/auth');
 const createPaginationType = require('../utils/create-pagination-type');
 
-const EntryPaginationType = createPaginationType(SiteType, 'EntryPagination');
-
 const EntryType = new GraphQLObjectType({
   name: 'Entry',
   fields: {
@@ -28,8 +26,13 @@ const EntryType = new GraphQLObjectType({
     content: {
       type: GraphQLString,
     },
+    snippet: {
+      type: GraphQLString,
+    },
   },
 });
+
+const EntryPaginationType = createPaginationType(EntryType, 'EntryPagination');
 
 // query
 const allEntries = {
