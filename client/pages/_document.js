@@ -15,10 +15,17 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta name="referrer" content="no-referrer" />
+          <link
+            rel="stylesheet"
+            href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css"
+          />
+          <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js" />
         </Head>
         <body>
           <Main />
           <NextScript />
+          <script>hljs.initHighlightingOnLoad();</script>
         </body>
       </Html>
     );

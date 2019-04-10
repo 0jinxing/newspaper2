@@ -12,7 +12,7 @@ const IconText = ({ type, text }) => (
 
 export default class EntryListItem extends Component {
   render() {
-    const { title, link, snippet } = this.props;
+    const { title, link, content } = this.props;
     return (
       <ListItem
         key={link}
@@ -23,7 +23,7 @@ export default class EntryListItem extends Component {
         ]}
       >
         <ListItem.Meta title={title} description={<a href={link}>{link}</a>} />
-        <div dangerouslySetInnerHTML={{ __html: snippet }} />
+        <div className="rss-content-wrap" dangerouslySetInnerHTML={{ __html: content }} />
       </ListItem>
     );
   }

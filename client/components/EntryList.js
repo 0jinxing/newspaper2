@@ -9,9 +9,10 @@ const ALL_ENTRIES = gql`
     allEntries(offset: $offset, limit: $limit) {
       count
       rows {
+        id
         link
         title
-        snippet
+        content
       }
     }
   }
@@ -22,9 +23,10 @@ const ENTRY_LIST_OF_SITE = gql`
     entryListOfSite(siteId: $siteId, offset: $offset, limit: $limit) {
       count
       rows {
+        id
         link
         title
-        snippet
+        content
       }
     }
   }
@@ -50,13 +52,13 @@ export default class EntryList extends Component {
           return (
             <div
               style={{
-                maxWidth: "900px",
+                maxWidth: "654px",
                 margin: '0 auto',
               }}
             >
               <List itemLayout="vertical" size="large">
                 {rows.map(r => (
-                  <EntryListItem {...r} />
+                  <EntryListItem key={r.id} {...r} />
                 ))}
               </List>
             </div>

@@ -16,7 +16,6 @@ const Entry = sequelize.define(
     link: {
       type: STRING,
       allowNull: false,
-      unique: true,
       validate: {
         isUrl: true,
       },
