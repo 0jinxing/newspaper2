@@ -5,6 +5,7 @@ import { Mutation, Query } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card, Menu } from 'antd';
 import gql from 'graphql-tag';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
+import EntryList from '../components/EntryList';
 import HomeLayout from '../layouts/HomeLayout';
 import '../styles/home.less';
 
@@ -45,7 +46,9 @@ const QUERY_SUBSCRIPTION_INFO = gql`
 class HomePage extends Component {
   render() {
     return (
-      <HomeLayout>content</HomeLayout>
+      <HomeLayout>
+        <EntryList type="all" />
+      </HomeLayout>
     );
   }
 }

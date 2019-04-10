@@ -1,16 +1,18 @@
 import { Component } from 'react';
 import Link from 'next/link';
-import router from 'next/router';
 import { Mutation } from 'react-apollo';
+import router from 'next/router';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card } from 'antd';
 import gql from 'graphql-tag';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
 import SignLayout from '../layouts/SignLayout';
 
 const FormItem = Form.Item;
-const SIGNIN_USER = gql`
-  mutation SigninUser($email: String!, $password: String!) {
-    signinUser(email: $email, password: $password) {
+const { Content } = Layout;
+
+const SIGNUP_USER = gql`
+  mutation SignupUser($email: String!, $password: String!, $username: String!) {
+    signupUser(email: $email, password: $password, username: $username) {
       user {
         email
         username
@@ -24,7 +26,7 @@ const SIGNIN_USER = gql`
   }
 `;
 
-class LoginPage extends Component {
+class RegisterPage extends Component {
   static getInitialProps({ query }) {
     return { query };
   }
@@ -36,10 +38,10 @@ class LoginPage extends Component {
 
     return (
       <Mutation
-        mutation={SIGNIN_USER}
+        mutation={SIGNUP_USER}
         onCompleted={data => {
           const {
-            signinUser: { accessToken, refreshToken },
+            signupUser: { accessToken, refreshToken },
           } = data;
           setAccessToken(accessToken);
           setRefreshToken(refreshToken);
@@ -48,19 +50,24 @@ class LoginPage extends Component {
           else router.push('/home');
         }}
       >
-        {(signinUser, { data, loading }) => (
-          <SignLayout title="Sign in to 2NEWSPAPER">
+        {(signupUser, { data, loading }) => (
+          <SignLayout title="Sign up for 2NEWSPAPER">
             <Form
               onSubmit={e => {
                 e.preventDefault();
                 validateFields((error, values) => {
                   if (!error) {
-                    const { email, password } = values;
-                    signinUser({ variables: { email, password } });
+                    const { email, password, username } = values;
+                    signupUser({ variables: { email, password, username } });
                   }
                 });
               }}
             >
+              <FormItem>
+                {getFieldDecorator('username', {
+                  rules: [{ required: true, message: 'Please input your username!' }],
+                })(<Input prefix={<Icon type="user" />} placeholder="Username" />)}
+              </FormItem>
               <FormItem>
                 {getFieldDecorator('email', {
                   rules: [
@@ -75,26 +82,18 @@ class LoginPage extends Component {
                   rules: [{ required: true, message: 'Please input your password!' }],
                 })(<Input prefix={<Icon type="lock" />} type="password" placeholder="Password" />)}
               </FormItem>
-
               <FormItem>
-                {getFieldDecorator('remember', {
-                  valuePropName: 'checked',
-                  initialValue: true,
-                })(<Checkbox>Remember me</Checkbox>)}
-                <a href="" style={{ float: 'right' }}>
-                  Forgot password
-                </a>
                 <Button
                   loading={loading}
                   type="primary"
                   htmlType="submit"
                   style={{ width: '100%' }}
                 >
-                  Sign in
+                  Sign up
                 </Button>
                 Or{' '}
-                <Link href="/register">
-                  <a>register now!</a>
+                <Link href={{ pathname: '/signin', query: { name: 1 } }}>
+                  <a>login now!</a>
                 </Link>
               </FormItem>
             </Form>
@@ -105,4 +104,4 @@ class LoginPage extends Component {
   }
 }
 
-export default Form.create()(LoginPage);
+export default Form.create()(RegisterPage);

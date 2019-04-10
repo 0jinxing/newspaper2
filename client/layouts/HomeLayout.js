@@ -13,8 +13,8 @@ export default class HomeLayout extends Component {
       <Layout className="home-layout-wrap ant-layout-has-sider">
         <SiderMenu />
         <Layout className="content-layout">
-          <Header className="header" />
-          <Content className="content">
+          <Header className="header" style={{ position: 'fixed', zIndex: 1, width: '100%' }} />
+          <Content className="content" style={{ marginTop: 88 }}>
             <div className="content-wrap">{children}</div>
           </Content>
           <Footer className="footer">
