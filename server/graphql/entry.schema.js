@@ -20,13 +20,13 @@ const EntryType = new GraphQLObjectType({
     link: {
       type: GraphQLString,
     },
-    updated: {
+    date: {
       type: DateType,
     },
-    content: {
+    description: {
       type: GraphQLString,
     },
-    snippet: {
+    summary: {
       type: GraphQLString,
     },
   },

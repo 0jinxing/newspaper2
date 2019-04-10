@@ -8,10 +8,12 @@ const {
 const Sequelize = require('sequelize');
 const moment = require('moment');
 const RssParser = require('rss-parser');
+const fetch = require('isomorphic-fetch');
 const DateType = require('./date.scalar');
 const createPaginationType = require('../utils/create-pagination-type');
 const { withAuth } = require('../utils/auth');
 const getFavicon = require('../utils/get-favicon');
+const parseRss = require('../utils/parse-rss');
 
 const SiteType = new GraphQLObjectType({
   name: 'Site',
@@ -31,7 +33,7 @@ const SiteType = new GraphQLObjectType({
     title: {
       type: GraphQLString,
     },
-    updated: {
+    date: {
       type: DateType,
     },
   },
@@ -136,24 +138,29 @@ const subscribeSite = withAuth({
     const { SiteModel, SubscriptionModel, EntryModel } = models;
     return db.transaction(async t => {
       const { id: userId } = auth;
-      const parser = new RssParser();
-      const parseResult = await parser.parseURL(link);
+      // const parser = new RssParser();
+      // const parseResult = await parser.parseURL(link);
+
+      const res = await fetch(link);
+      const xml = await res.text();
+      const rss = await parseRss(xml);
+
       const [existOrNewSite, created] = await SiteModel.findOrCreate({
         where: { link },
         defaults: {
-          title: parseResult.title,
-          updated: +moment(parseResult.lastBuildDate),
+          title: rss.title,
+          date: +moment(rss.date),
           favicon: await getFavicon(link),
         },
         transaction: t,
       });
       // 转换格式
-      const enterObjectArray = parseResult.items.map(item => ({
+      const enterObjectArray = rss.items.map(item => ({
         title: item.title,
         link: item.link,
-        content: item.content,
-        updated: +moment(item.isoDate),
-        snippet: item.contentSnippet,
+        description: item.description,
+        date: +moment(item.date),
+        summary: item.summary,
         siteId: existOrNewSite.id,
       }));
       if (created) {
@@ -171,9 +178,9 @@ const subscribeSite = withAuth({
         );
         // 插入新的
         await EntryModel.bulkCreate(enterObjectArray, { transaction: t });
-        // 更新对应 site 的 updated
+        // 更新对应 site 的 date
         await existOrNewSite.update({
-          updated: +moment(parseResult.lastBuildDate),
+          date: +moment(rss.date),
         });
       }
       // 创建对应记录（存在则不创建）

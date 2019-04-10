@@ -20,12 +20,16 @@ class MyDocument extends Document {
             rel="stylesheet"
             href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css"
           />
-          <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js" />
+          <script src="https://cdn.bootcss.com/highlight.js/9.15.6/highlight.min.js" />
         </Head>
         <body>
           <Main />
           <NextScript />
-          <script>hljs.initHighlightingOnLoad();</script>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `hljs.initHighlightingOnLoad();`,
+            }}
+          />
         </body>
       </Html>
     );

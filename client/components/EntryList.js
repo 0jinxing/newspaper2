@@ -12,7 +12,7 @@ const ALL_ENTRIES = gql`
         id
         link
         title
-        content
+        summary
       }
     }
   }
@@ -26,7 +26,7 @@ const ENTRY_LIST_OF_SITE = gql`
         id
         link
         title
-        content
+        summary
       }
     }
   }

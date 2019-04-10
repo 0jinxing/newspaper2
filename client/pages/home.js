@@ -7,7 +7,7 @@ import gql from 'graphql-tag';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
 import EntryList from '../components/EntryList';
 import HomeLayout from '../layouts/HomeLayout';
-import '../styles/home.less';
+// import '../styles/home.less';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -26,7 +26,7 @@ const QUERY_SUBSCRIPTION_INFO = gql`
         link
         favicon
         title
-        updated
+        date
       }
     }
     ownSubscriptionEntryList(offset: $entryOffset, limit: $entryLimit) {
@@ -36,8 +36,8 @@ const QUERY_SUBSCRIPTION_INFO = gql`
         siteId
         title
         link
-        updated
-        snippet
+        date
+        summary
       }
     }
   }

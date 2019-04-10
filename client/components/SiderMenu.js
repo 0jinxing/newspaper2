@@ -21,7 +21,7 @@ const OWN_SUBSCRIPTION_LIST = gql`
         link
         favicon
         title
-        updated
+        date
       }
     }
   }

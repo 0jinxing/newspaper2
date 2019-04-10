@@ -20,16 +20,16 @@ const Entry = sequelize.define(
         isUrl: true,
       },
     },
-    updated: {
+    date: {
       type: DATE,
       allowNull: false,
       commit: '`Entry` 更新时间，区别于 update_at',
     },
-    content: {
+    description: {
       type: TEXT,
       allowNull: false,
     },
-    snippet: {
+    summary: {
       type: TEXT,
     },
     siteId: {

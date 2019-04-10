@@ -32,7 +32,7 @@ const Site = sequelize.define(
       type: STRING,
       allowNull: false,
     },
-    updated: {
+    date: {
       type: DATE,
       commit: '`site` 更新时间，区别于 update_at',
     },

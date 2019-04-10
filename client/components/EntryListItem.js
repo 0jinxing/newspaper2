@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { List, Icon } from 'antd';
+import "./EntryListItem.less";
 
 const { Item: ListItem } = List;
 
@@ -12,9 +13,10 @@ const IconText = ({ type, text }) => (
 
 export default class EntryListItem extends Component {
   render() {
-    const { title, link, content } = this.props;
+    const { title, link, summary } = this.props;
     return (
       <ListItem
+        className="entry-list-item"
         key={link}
         actions={[
           <IconText type="star-o" text="156" />,
@@ -23,7 +25,7 @@ export default class EntryListItem extends Component {
         ]}
       >
         <ListItem.Meta title={title} description={<a href={link}>{link}</a>} />
-        <div className="rss-content-wrap" dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="rss-description-wrap" dangerouslySetInnerHTML={{ __html: summary }} />
       </ListItem>
     );
   }
