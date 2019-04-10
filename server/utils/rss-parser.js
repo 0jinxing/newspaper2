@@ -1,4 +1,4 @@
-const xml2js = require('xml2js');
+const xmljs = require('xml-js');
 const fetch = require('isomorphic-fetch');
 
 const DEFAULT_HEADERS = {
@@ -7,7 +7,8 @@ const DEFAULT_HEADERS = {
 
 const parserRSS = async url => {
   const res = await fetch(url, { headers: DEFAULT_HEADERS });
-  const xmlStr = await res.text();
-
+  const xmlText = await res.text();
+  const xmlObject = xmljs.xml2js(xmlText);
   
 };
+parserRSS('http://zhangwenli.com/blog/feed.xml');
