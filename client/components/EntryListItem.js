@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { List, Icon } from 'antd';
-import "./EntryListItem.less";
+import './EntryListItem.less';
 
 const { Item: ListItem } = List;
 

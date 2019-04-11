@@ -138,9 +138,6 @@ const subscribeSite = withAuth({
     const { SiteModel, SubscriptionModel, EntryModel } = models;
     return db.transaction(async t => {
       const { id: userId } = auth;
-      // const parser = new RssParser();
-      // const parseResult = await parser.parseURL(link);
-
       const res = await fetch(link);
       const xml = await res.text();
       const rss = await parseRss(xml);
@@ -149,7 +146,7 @@ const subscribeSite = withAuth({
         where: { link },
         defaults: {
           title: rss.title,
-          date: +moment(rss.date),
+          date: +moment(rss.date ? rss.date : undefined),
           favicon: await getFavicon(link),
         },
         transaction: t,
@@ -159,7 +156,7 @@ const subscribeSite = withAuth({
         title: item.title,
         link: item.link,
         description: item.description,
-        date: +moment(item.date),
+        date: +moment(item.date ? item.date : undefined),
         summary: item.summary,
         siteId: existOrNewSite.id,
       }));
@@ -180,7 +177,7 @@ const subscribeSite = withAuth({
         await EntryModel.bulkCreate(enterObjectArray, { transaction: t });
         // 更新对应 site 的 date
         await existOrNewSite.update({
-          date: +moment(rss.date),
+          date: +moment(rss.date ? rss.date : undefined),
         });
       }
       // 创建对应记录（存在则不创建）

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const logger = require('../logger');
 
-module.exports = new Sequelize('2newspaper', 'root', 'root', {
+module.exports = new Sequelize('2newspaper', 'root', '123456', {
   host: 'localhost',
   dialect: 'mysql',
   define: {

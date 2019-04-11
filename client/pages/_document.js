@@ -27,7 +27,9 @@ class MyDocument extends Document {
           <NextScript />
           <script
             dangerouslySetInnerHTML={{
-              __html: `hljs.initHighlightingOnLoad();`,
+              __html: `
+              hljs.initHighlightingOnLoad();
+              `,
             }}
           />
         </body>

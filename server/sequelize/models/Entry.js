@@ -22,7 +22,6 @@ const Entry = sequelize.define(
     },
     date: {
       type: DATE,
-      allowNull: false,
       commit: '`Entry` 更新时间，区别于 update_at',
     },
     description: {
