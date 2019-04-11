@@ -5,7 +5,7 @@ export default handleActions(
   {
     [actions.filter]: (state, action) => ({
       ...state,
-      filter: action.type,
+      filter: action.payload,
     }),
   },
   { filter: 'TODAY' }

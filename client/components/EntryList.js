@@ -2,6 +2,7 @@ import { Component } from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { List } from 'antd';
+import { connect } from 'react-redux';
 import EntryListItem from '../components/EntryListItem';
 
 const ALL_ENTRIES = gql`
@@ -19,7 +20,7 @@ const ALL_ENTRIES = gql`
 `;
 
 const ENTRY_LIST_OF_SITE = gql`
-  query EntryListOfSite($siteId: Int!, $offset: Int, $limit: Int) {
+  query EntryListOfSite($siteId: ID!, $offset: Int, $limit: Int) {
     entryListOfSite(siteId: $siteId, offset: $offset, limit: $limit) {
       count
       rows {
@@ -33,16 +34,18 @@ const ENTRY_LIST_OF_SITE = gql`
 `;
 
 const queryMap = {
-  all: ALL_ENTRIES,
-  today: ALL_ENTRIES, // @TODO
-  site: ENTRY_LIST_OF_SITE,
+  ALL: ALL_ENTRIES,
+  TODAY: ALL_ENTRIES, // @TODO
+  SITE: ENTRY_LIST_OF_SITE,
 };
 
-export default class EntryList extends Component {
+class EntryList extends Component {
   render() {
-    const { type, offset, limit } = this.props;
-    const query = queryMap[isNaN(parseInt(type)) ? type : 'site'];
-    const variables = isNaN(parseInt(type)) ? { offset, limit } : { siteId: type, offset, limit };
+    const { filter, offset, limit } = this.props;
+    const query = queryMap[isNaN(parseInt(filter)) ? filter : 'SITE'];
+    const variables = isNaN(parseInt(filter))
+      ? { offset, limit }
+      : { siteId: parseInt(filter), offset, limit };
 
     return (
       <Query query={query} variables={variables}>
@@ -52,7 +55,7 @@ export default class EntryList extends Component {
           return (
             <div
               style={{
-                maxWidth: "654px",
+                maxWidth: '654px',
                 margin: '0 auto',
               }}
             >
@@ -68,3 +71,11 @@ export default class EntryList extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    filter: state.entryFilter.filter,
+  };
+};
+
+export default connect(mapStateToProps)(EntryList);

@@ -40,7 +40,15 @@ class SiderMenu extends Component {
           } = loading ? { ownSubscriptionList: {} } : data;
 
           return (
-            <Sider className="sider-menu-wrap">
+            <Sider
+              className="sider-menu-wrap"
+              style={{
+                overflow: 'auto',
+                height: '100vh',
+                position: 'fixed',
+                left: 0,
+              }}
+            >
               {loading ? (
                 <SiderMenuLoader />
               ) : (
@@ -50,7 +58,7 @@ class SiderMenu extends Component {
                   mode="inline"
                   defaultOpenKeys={['START']}
                   defaultSelectedKeys={[filter]}
-                  onSelect={({ key }) => {
+                  onSelect={({ item, key, selectedKeys }) => {
                     switchType(key);
                   }}
                 >
@@ -90,7 +98,7 @@ class SiderMenu extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    ...state.entryFilter,
+    filter: state.entryFilter.filter,
   };
 };
 
