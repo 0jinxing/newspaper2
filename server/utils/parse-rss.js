@@ -40,16 +40,4 @@ function parseRss(xml) {
   });
 }
 
-const fetch = require('isomorphic-fetch');
-async function main() {
-  const res = await fetch('http://zhangwenli.com/blog/feed.xml');
-  const xml = await res.text();
-  const data = await parseRss(xml);
-  console.log(data);
-}
-
-// main();
-
-console.log(+moment(undefined));
-
 module.exports = parseRss;

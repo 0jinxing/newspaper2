@@ -1,10 +1,15 @@
 // import fetch from 'isomorphic-fetch';
 import App, { Container } from 'next/app';
+import { Provider } from 'react-redux';
 import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import withRedux from 'next-redux-wrapper';
+import withReduxSaga from 'next-redux-saga';
+
 import { getAccessToken, getRefreshToken } from '../utils/auth';
+import configureStore from '../configure-store';
 import '../styles/app.less';
 
 const client = new ApolloClient({
@@ -25,15 +30,19 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export default class MyApp extends App {
+class MyApp extends App {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, store } = this.props;
     return (
       <Container>
-        <ApolloProvider client={client}>
-          <Component {...pageProps} />
-        </ApolloProvider>
+        <Provider store={store}>
+          <ApolloProvider client={client}>
+            <Component {...pageProps} />
+          </ApolloProvider>
+        </Provider>
       </Container>
     );
   }
 }
+
+export default withRedux(configureStore)(MyApp);

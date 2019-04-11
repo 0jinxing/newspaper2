@@ -2,10 +2,12 @@ import { Component } from 'react';
 import Link from 'next/link';
 import router from 'next/router';
 import gql from 'graphql-tag';
+import { connect } from 'react-redux';
 import { Mutation, Query } from 'react-apollo';
 import { Layout, Input, Icon, Form, Button, Checkbox, Card, Menu } from 'antd';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
-import SiderMenuLoader from "./SiderMenuLoader";
+import SiderMenuLoader from './SiderMenuLoader';
+import actions from '../actions/entry-filter';
 import './SiderMenu.less';
 
 const { Item: MenuItem, SubMenu } = Menu;
@@ -27,8 +29,9 @@ const OWN_SUBSCRIPTION_LIST = gql`
   }
 `;
 
-export default class SiderMenu extends Component {
+class SiderMenu extends Component {
   render() {
+    const { filter, switchType } = this.props;
     return (
       <Query query={OWN_SUBSCRIPTION_LIST}>
         {({ data, loading }) => {
@@ -39,25 +42,28 @@ export default class SiderMenu extends Component {
           return (
             <Sider className="sider-menu-wrap">
               {loading ? (
-                <SiderMenuLoader/>
+                <SiderMenuLoader />
               ) : (
                 <Menu
                   className="sider-menu"
                   theme="light"
                   mode="inline"
-                  defaultOpenKeys={['start']}
-                  defaultSelectedKeys={['today']}
+                  defaultOpenKeys={['START']}
+                  defaultSelectedKeys={[filter]}
+                  onSelect={({ key }) => {
+                    switchType(key);
+                  }}
                 >
-                  <Menu.Item key="today">
+                  <Menu.Item key="TODAY">
                     <Icon type="calendar" />
                     <span>TODAY</span>
                   </Menu.Item>
-                  <Menu.Item key="all">
+                  <Menu.Item key="ALL">
                     <Icon type="tag" />
                     <span>ALL</span>
                   </Menu.Item>
                   <SubMenu
-                    key="start"
+                    key="START"
                     title={
                       <span>
                         <Icon type="star" />
@@ -66,7 +72,7 @@ export default class SiderMenu extends Component {
                     }
                   >
                     {rows.map(r => (
-                      <MenuItem key={r.link}>
+                      <MenuItem key={r.id}>
                         {/* @TODO title 长度限制 */}
                         <span className="sider-site-menu"> {r.title}</span>
                       </MenuItem>
@@ -81,3 +87,20 @@ export default class SiderMenu extends Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...state.entryFilter,
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    switchType: filter => dispatch(actions.filter(filter)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SiderMenu);
