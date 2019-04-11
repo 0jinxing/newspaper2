@@ -42,12 +42,6 @@ class SiderMenu extends Component {
           return (
             <Sider
               className="sider-menu-wrap"
-              style={{
-                overflow: 'auto',
-                height: '100vh',
-                position: 'fixed',
-                left: 0,
-              }}
             >
               {loading ? (
                 <SiderMenuLoader />

@@ -1,5 +1,6 @@
 const { GraphQLID, GraphQLInt, GraphQLString, GraphQLObjectType } = require('graphql');
 const Sequelize = require('sequelize');
+const moment = require('moment');
 const DateType = require('./date.scalar');
 const { SiteType } = require('./site.schema');
 const { withAuth } = require('../utils/auth');
@@ -51,6 +52,43 @@ const allEntries = {
     return EntryModel.findAndCountAll(typeof limit === 'number' ? { offset, limit } : { offset });
   },
 };
+
+const todayEntryList = withAuth({
+  type: EntryPaginationType,
+  args: {
+    offset: {
+      type: GraphQLInt,
+    },
+    limit: {
+      type: GraphQLInt,
+    },
+  },
+  resolve: async (root, args, { models, auth }) => {
+    const { EntryModel, SubscriptionModel } = models;
+    const { id: userId } = auth;
+    const { offset = 0, limit } = args;
+    const subscriptionList = await SubscriptionModel.findAll({
+      where: {
+        userId,
+      },
+    });
+    return EntryModel.findAndCountAll({
+      where: {
+        siteId: {
+          [Sequelize.Op.in]: subscriptionList.map(s => s.siteId),
+        },
+        date: {
+          [Sequelize.Op.gt]: +moment()
+            .subtract(1, 'd')
+            .hour(0)
+            .minute(0)
+            .second(0),
+        },
+      },
+      ...(typeof limit === 'number' ? { offset, limit } : { offset }),
+    });
+  },
+});
 
 const entryListOfSite = {
   type: EntryPaginationType,
@@ -110,6 +148,7 @@ module.exports = {
   EntryPaginationType,
   query: {
     allEntries,
+    todayEntryList,
     entryListOfSite,
     ownSubscriptionEntryList,
   },

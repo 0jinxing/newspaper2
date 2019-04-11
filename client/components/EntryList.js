@@ -1,41 +1,13 @@
 import { Component } from 'react';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { List } from 'antd';
 import { connect } from 'react-redux';
 import EntryListItem from '../components/EntryListItem';
-
-const ALL_ENTRIES = gql`
-  query AllEntries($offset: Int, $limit: Int) {
-    allEntries(offset: $offset, limit: $limit) {
-      count
-      rows {
-        id
-        link
-        title
-        summary
-      }
-    }
-  }
-`;
-
-const ENTRY_LIST_OF_SITE = gql`
-  query EntryListOfSite($siteId: ID!, $offset: Int, $limit: Int) {
-    entryListOfSite(siteId: $siteId, offset: $offset, limit: $limit) {
-      count
-      rows {
-        id
-        link
-        title
-        summary
-      }
-    }
-  }
-`;
+import { ALL_ENTRIES, TODAY_ENTRY_LIST, ENTRY_LIST_OF_SITE } from '../graphql/entry';
 
 const queryMap = {
   ALL: ALL_ENTRIES,
-  TODAY: ALL_ENTRIES, // @TODO
+  TODAY: TODAY_ENTRY_LIST,
   SITE: ENTRY_LIST_OF_SITE,
 };
 
@@ -51,7 +23,9 @@ class EntryList extends Component {
       <Query query={query} variables={variables}>
         {({ data, loading }) => {
           if (loading) return <p>loading</p>;
-          const { count, rows } = data.allEntries || data.entryListOfSite || { count: 0, rows: [] };
+          const { count, rows } = data.allEntries ||
+            data.todayEntryList ||
+            data.entryListOfSite || { count: 0, rows: [] };
           return (
             <div
               style={{
