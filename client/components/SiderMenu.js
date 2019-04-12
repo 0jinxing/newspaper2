@@ -4,7 +4,7 @@ import router from 'next/router';
 import gql from 'graphql-tag';
 import { connect } from 'react-redux';
 import { Mutation, Query } from 'react-apollo';
-import { Layout, Input, Icon, Form, Button, Checkbox, Card, Menu } from 'antd';
+import { Layout, Input, Icon, Form, Button, Checkbox, Card, Menu, Drawer } from 'antd';
 import { setAccessToken, setRefreshToken } from '../utils/auth';
 import SiderMenuLoader from './SiderMenuLoader';
 import actions from '../actions/entry-filter';
@@ -31,7 +31,8 @@ const OWN_SUBSCRIPTION_LIST = gql`
 
 class SiderMenu extends Component {
   render() {
-    const { filter, switchType } = this.props;
+    const { collapsed, onCollapse, filter, switchType } = this.props;
+
     return (
       <Query query={OWN_SUBSCRIPTION_LIST}>
         {({ data, loading }) => {
@@ -41,7 +42,14 @@ class SiderMenu extends Component {
 
           return (
             <Sider
+              collapsible
+              collapsed={collapsed}
+              onCollapse={onCollapse}
+              theme="light"
               className="sider-menu-wrap"
+              style={{
+                boxShadow: '1px 2px 4px #f0f1f2',
+              }}
             >
               {loading ? (
                 <SiderMenuLoader />
