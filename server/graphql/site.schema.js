@@ -7,7 +7,6 @@ const {
 } = require('graphql');
 const Sequelize = require('sequelize');
 const moment = require('moment');
-const RssParser = require('rss-parser');
 const fetch = require('isomorphic-fetch');
 const DateType = require('./date.scalar');
 const createPaginationType = require('../utils/create-pagination-type');

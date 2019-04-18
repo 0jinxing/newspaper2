@@ -6,11 +6,9 @@ import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import withRedux from 'next-redux-wrapper';
-import withReduxSaga from 'next-redux-saga';
 
 import { getAccessToken, getRefreshToken } from '../utils/auth';
 import configureStore from '../configure-store';
-import '../styles/app.less';
 
 const client = new ApolloClient({
   link: new HttpLink({

@@ -16,22 +16,13 @@ class MyDocument extends Document {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta name="referrer" content="no-referrer" />
-          <link
-            rel="stylesheet"
-            href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css"
-          />
-          <script src="https://cdn.bootcss.com/highlight.js/9.15.6/highlight.min.js" />
+          <link rel="stylesheet" href="/static/normalize.css/normalize.css" />
+          <link rel="stylesheet" href="/static/@blueprintjs/core/lib/css/blueprint.css" />
+          <link rel="stylesheet" href="/static/@blueprintjs/icons/lib/css/blueprint-icons.css" />
         </Head>
         <body>
           <Main />
           <NextScript />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              hljs.initHighlightingOnLoad();
-              `,
-            }}
-          />
         </body>
       </Html>
     );
