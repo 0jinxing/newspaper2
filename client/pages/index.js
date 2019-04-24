@@ -1,4 +1,5 @@
-import { Button } from '@blueprintjs/core';
+import { Button, Icon } from '@blueprintjs/core';
+
 export default () => {
-  return <Button type="button">11</Button>;
+  return <Icon icon="add-column-left"/>;
 };

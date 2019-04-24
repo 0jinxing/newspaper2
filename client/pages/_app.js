@@ -10,6 +10,10 @@ import withRedux from 'next-redux-wrapper';
 import { getAccessToken, getRefreshToken } from '../utils/auth';
 import configureStore from '../configure-store';
 
+import "normalize.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
+
 const client = new ApolloClient({
   link: new HttpLink({
     uri: '/graphql',
