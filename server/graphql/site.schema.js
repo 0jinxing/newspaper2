@@ -4,10 +4,12 @@ const {
   GraphQLInt,
   GraphQLNonNull,
   GraphQLObjectType,
+  GraphQLList,
 } = require('graphql');
 const Sequelize = require('sequelize');
 const moment = require('moment');
 const fetch = require('isomorphic-fetch');
+const { EntryType } = require('./entry.schema');
 const DateType = require('./date.scalar');
 const createPaginationType = require('../utils/create-pagination-type');
 const { withAuth } = require('../utils/auth');

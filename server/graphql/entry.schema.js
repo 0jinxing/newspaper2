@@ -2,7 +2,6 @@ const { GraphQLID, GraphQLInt, GraphQLString, GraphQLObjectType } = require('gra
 const Sequelize = require('sequelize');
 const moment = require('moment');
 const DateType = require('./date.scalar');
-const { SiteType } = require('./site.schema');
 const { withAuth } = require('../utils/auth');
 const createPaginationType = require('../utils/create-pagination-type');
 

@@ -1,0 +1,21 @@
+.homeWrap {
+  display: flex;
+  flex-direction: row;
+  margin: auto;
+  max-width: 1100px;
+  min-width: 800px;
+  min-height: 100vh;
+}
+
+.navWrap {
+  flex-basis: 270px;
+  position: relative;
+}
+
+.spinnerWrap {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translateX(-50%) translateY(-100%);
+  /* margin: 10vh auto; */
+}

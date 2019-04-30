@@ -4,8 +4,8 @@ const openPopUp = (url, width, height, name) => {
   if (isNaN(width)) width = screen.width * 0.8;
   if (isNaN(height)) height = screen.height * 0.8;
 
-  x = (screen.width - width) / 2;
-  y = (screen.height - height) / 2;
+  const x = (screen.width - width) / 2;
+  const y = (screen.height - height) / 2 - 60; // 略微偏上，视觉中心
 
   const features = `toolbar=no,location=no,directories=no,menubar=no,scrollbars=no,resizable=no,status=no,width=${width},height=${height},left=${x},top=${y}`;
 
@@ -19,3 +19,5 @@ const openPopUp = (url, width, height, name) => {
   }
   return popupReference;
 };
+
+export default openPopUp;

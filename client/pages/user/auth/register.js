@@ -3,21 +3,21 @@ import Link from 'next/link';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import {
+  FormGroup,
   InputGroup,
   Button,
   Tooltip,
   Intent,
-  FormGroup,
+  Icon,
   Toaster,
   Position,
 } from '@blueprintjs/core';
 import Layout from '@/layouts/UserAuthLayout';
-import ValidFormGroup from '@/components/ValidFormGroup';
 import styles from './auth.css';
 
-const SIGN_IN_USER = gql`
-  mutation SignInUser($email: String!, $password: String!) {
-    signInUser(email: $email, password: $password) {
+const SIGN_UP_USER = gql`
+  mutation SignUpUser($username: String!, $email: String!, $password: String!) {
+    signUpUser(username: $username, email: $email, password: $password) {
       user {
         username
         avatar
@@ -28,61 +28,52 @@ const SIGN_IN_USER = gql`
   }
 `;
 
-class Login extends React.Component {
+class Register extends React.Component {
   state = {
-    showPassword: false,
+    username: '',
     email: '',
     password: '',
   };
 
-  static async getInitialProps(context) {
-    console.log(context);
-  }
-
-  handleLockClick = () => {
-    const { showPassword } = this.state;
-    this.setState({ showPassword: !showPassword });
+  handleUsernameChange = e => {
+    this.setState({ username: e.target.value });
   };
-
   handleEmailChange = e => {
     this.setState({ email: e.target.value });
   };
-
   handlePasswordChange = e => {
     this.setState({ password: e.target.value });
   };
 
   render() {
-    const { showPassword } = this.state;
-    const lockButton = (
-      <Tooltip content={`${showPassword ? '显示' : '隐藏'}密码`}>
-        <Button
-          icon={showPassword ? 'eye-open' : 'eye-off'}
-          intent={Intent.WARNING}
-          minimal={true}
-          onClick={this.handleLockClick}
-        />
-      </Tooltip>
-    );
     return (
-      <Mutation mutation={SIGN_IN_USER}>
-        {(signInUser, { error, data, loading }) => (
-          <Layout title="登录 2NEWSPAPER">
-            <ValidFormGroup label="邮箱" rules={[{ type: 'isEmail', message: '邮箱格式不正确' }]}>
+      <Mutation mutation={SIGN_UP_USER}>
+        {(signUpUser, { error, data, loading }) => (
+          <Layout title="注册 2NEWSPAPER">
+            <FormGroup label="昵称">
+              <InputGroup
+                placeholder="输入你的昵称..."
+                leftIcon="user"
+                onChange={this.handleUsernameChange}
+              />
+            </FormGroup>
+            <FormGroup label="邮箱">
               <InputGroup
                 placeholder="输入你的邮箱..."
                 leftIcon="link"
                 onChange={this.handleEmailChange}
               />
-            </ValidFormGroup>
+            </FormGroup>
             <FormGroup label="密码">
               <InputGroup
-                onChange={this.handlePasswordChange}
                 leftIcon="lock"
                 placeholder="输入你的密码..."
-                rightElement={lockButton}
-                type={showPassword ? 'text' : 'password'}
+                type="password"
+                onChange={this.handlePasswordChange}
               />
+            </FormGroup>
+            <FormGroup label="确认密码">
+              <InputGroup leftIcon="confirm" placeholder="确认你的密码..." type="password" />
             </FormGroup>
             <Button
               type="submit"
@@ -91,12 +82,12 @@ class Login extends React.Component {
               fill
               loading={loading}
               onClick={() => {
-                const { email, password } = this.state;
-                signInUser({ variables: { email, password } })
+                const { username, password, email } = this.state;
+                signUpUser({ variables: { username, password, email } })
                   .then(result => {
                     const { data } = result;
                     window.opener.postMessage(
-                      { type: 'SIGN_IN', ...data.signInUser },
+                      { type: 'SIGN_IN', ...data.signUpUser },
                       location.origin
                     );
                     window.close();
@@ -113,16 +104,13 @@ class Login extends React.Component {
                   });
               }}
             >
-              登录
+              注册
             </Button>
             <div className={styles.links}>
               <p>
-                <Link href="/user/auth/register">
-                  <a>没有账号，现在注册</a>
+                <Link href="/user/auth/login">
+                  <a>已有有账号，现在登录</a>
                 </Link>
-              </p>
-              <p>
-                <a>忘记密码</a>
               </p>
             </div>
             <Toaster position={Position.TOP} ref={r => (this.toaster = r)} />
@@ -133,4 +121,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default Register;

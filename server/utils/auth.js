@@ -29,10 +29,27 @@ const withAuth = target => {
   return Object.assign({}, target, {
     resolve: (root, args, context) => {
       const { ctx } = context;
-      const token = /Bearer\s+(.*)/.exec(ctx.headers['authorization'])[1];
-      // @TODO error handle
-      const auth = jwt.verify(token, accessSecret);
-      return target.resolve(root, args, { ...context, auth });
+      try {
+        const accessToken =
+          /Bearer\s+(.*)/.exec(ctx.headers['authorization'])[1] || ctx.cookies.get('access_token');
+        const auth = jwt.verify(accessToken, accessSecret);
+        return target.resolve(root, args, { ...context, auth });
+      } catch {
+        // 更换 token
+        const refreshToken = ctx.cookies.get('refresh_token');
+        const timeoutAccessToken = ctx.cookies.get('access_token');
+        const { id, accessToken } = jwt.verify(refreshToken, refreshSecret);
+        if (timeoutAccessToken !== accessToken) {
+          throw new Error('ERR_INCORRECT_AUTH');
+        }
+        const newAccessToken = jwt.sign({ id }, accessSecret, { expiresIn: accessExpires });
+        const newRefreshToken = jwt.sign({ id, newAccessToken }, refreshSecret, {
+          expiresIn: refreshExpires,
+        });
+        ctx.cookies.set('access_token', newAccessToken);
+        ctx.cookies.set('refresh_token', newRefreshToken);
+        return target.resolve(root, args, { ...context, auth });
+      }
     },
   });
 };

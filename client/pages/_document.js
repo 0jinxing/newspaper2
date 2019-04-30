@@ -16,6 +16,7 @@ class MyDocument extends Document {
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta name="referrer" content="no-referrer" />
+          <link rel="icon" type="image/png" href="/static/favicon.png" />
         </Head>
         <body>
           <Main />
