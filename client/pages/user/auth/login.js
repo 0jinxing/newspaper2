@@ -11,6 +11,7 @@ import {
   Toaster,
   Position,
 } from '@blueprintjs/core';
+import cookie from 'cookie';
 import Layout from '@/layouts/UserAuthLayout';
 import ValidFormGroup from '@/components/ValidFormGroup';
 import styles from './auth.css';
@@ -34,10 +35,6 @@ class Login extends React.Component {
     email: '',
     password: '',
   };
-
-  static async getInitialProps(context) {
-    console.log(context);
-  }
 
   handleLockClick = () => {
     const { showPassword } = this.state;
@@ -94,11 +91,13 @@ class Login extends React.Component {
                 const { email, password } = this.state;
                 signInUser({ variables: { email, password } })
                   .then(result => {
-                    const { data } = result;
-                    window.opener.postMessage(
-                      { type: 'SIGN_IN', ...data.signInUser },
-                      location.origin
-                    );
+                    const {
+                      data: { signInUser },
+                    } = result;
+                    cookie.serialize('token', signInUser.accessToken, {
+                      maxAge: 30 * 24 * 60 * 60,
+                    });
+                    window.opener.postMessage({ type: 'SIGN_IN', ...signInUser }, location.origin);
                     window.close();
                   })
                   .catch(error => {

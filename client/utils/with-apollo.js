@@ -1,61 +1,86 @@
+import React from 'react';
+import cookie from 'cookie';
+import { getDataFromTree } from 'react-apollo';
 import Head from 'next/head';
-import { getDataFromTree, ApolloProvider } from 'react-apollo';
+
 import initApollo from './init-apollo';
 
-const getComponentDisplayName = Component => {
-  return Component.displayName || Component.name || 'Unknown';
-};
+function parseCookies(req, options = {}) {
+  return cookie.parse(req ? req.headers.cookie || '' : document.cookie, options);
+}
 
-export default ComposedComponent => {
+export default App => {
   return class WithData extends React.Component {
-    static displayName = `WithData(${getComponentDisplayName(ComposedComponent)})`;
+    static displayName = `WithData(${App.displayName})`;
 
     static async getInitialProps(ctx) {
-      let serverState = { apollo: { data: {} } };
-      let composedInitialProps = {};
+      const {
+        Component,
+        router,
+        ctx: { req, res },
+      } = ctx;
+      const apollo = initApollo(
+        {},
+        {
+          getToken: () => parseCookies(req).token,
+        }
+      );
 
-      if (typeof ComposedComponent.getInitialProps === 'function') {
-        composedInitialProps = await ComposedComponent.getInitialProps(ctx);
+      ctx.ctx.apolloClient = apollo;
+
+      let appProps = {};
+      if (App.getInitialProps) {
+        appProps = await App.getInitialProps(ctx);
+      }
+
+      if (res && res.finished) {
+        // When redirecting, the response is finished.
+        // No point in continuing to render
+        return {};
       }
 
       if (!process.browser) {
-        const apolloClient = initApollo();
+        // Run all graphql queries in the component tree
+        // and extract the resulting data
         try {
+          // Run all GraphQL queries
           await getDataFromTree(
-            <ApolloProvider client={apolloClient}>
-              <ComposedComponent {...composedInitialProps} />
-            </ApolloProvider>,
-            {
-              router: {
-                asPath: ctx.asPath,
-                pathname: ctx.pathname,
-                query: ctx.query,
-              },
-            }
+            <App {...appProps} Component={Component} router={router} apolloClient={apollo} />
           );
-        } catch (error) {}
+        } catch (error) {
+          // Prevent Apollo Client GraphQL errors from crashing SSR.
+          // Handle them in components via the data.error prop:
+          // https://www.apollographql.com/docs/react/api/react-apollo.html#graphql-query-data-error
+          console.error('Error while running `getDataFromTree`', error);
+        }
+
+        // getDataFromTree does not call componentWillUnmount
+        // head side effect therefore need to be cleared manually
         Head.rewind();
-        serverState = {
-          apollo: {
-            data: apolloClient.cache.extract(),
-          },
-        };
       }
+
+      // Extract query data from the Apollo's store
+      const apolloState = apollo.cache.extract();
+
       return {
-        serverState,
-        ...composedInitialProps,
+        ...appProps,
+        apolloState,
       };
     }
+
     constructor(props) {
       super(props);
-      this.apollo = initApollo(this.props.serverState.apollo.data);
+      // `getDataFromTree` renders the component first, the client is passed off as a property.
+      // After that rendering is done using Next's normal rendering pipeline
+      this.apolloClient = initApollo(props.apolloState, {
+        getToken: () => {
+          return parseCookies().token;
+        },
+      });
     }
+
     render() {
-      return (
-        <ApolloProvider client={this.apollo}>
-          <ComposedComponent {...this.props} />
-        </ApolloProvider>
-      );
+      return <App {...this.props} apolloClient={this.apolloClient} />;
     }
   };
 };

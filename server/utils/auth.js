@@ -15,7 +15,10 @@ const refreshSecret = process.env.JWT_REFRESH_SECRET || '0jinxing@gmail.com';
 const accessExpires = process.env.JWT_ACCESS_EXPIRES || 1000 * 60 * 30; // 30 m
 const refreshExpires = process.env.JWT_REFRESH_EXPIRES || 1000 * 60 * 60 * 30; // 30 d
 
-const signAccessToken = payload => jwt.sign(payload, accessSecret, { expiresIn: accessExpires });
+const signAccessToken = payload => {
+  const a = jwt.sign(payload, accessSecret, { expiresIn: accessExpires });
+  return a;
+};
 
 const signRefreshToken = (payload, accessToken) => {
   return jwt.sign({ ...payload, accessToken }, refreshSecret, { expiresIn: refreshExpires });
@@ -30,25 +33,12 @@ const withAuth = target => {
     resolve: (root, args, context) => {
       const { ctx } = context;
       try {
-        const accessToken =
-          /Bearer\s+(.*)/.exec(ctx.headers['authorization'])[1] || ctx.cookies.get('access_token');
+        const accessToken = /Bearer\s+(.*)/.exec(ctx.headers['authorization'])[1];
         const auth = jwt.verify(accessToken, accessSecret);
         return target.resolve(root, args, { ...context, auth });
-      } catch {
+      } catch (error) {
         // 更换 token
-        const refreshToken = ctx.cookies.get('refresh_token');
-        const timeoutAccessToken = ctx.cookies.get('access_token');
-        const { id, accessToken } = jwt.verify(refreshToken, refreshSecret);
-        if (timeoutAccessToken !== accessToken) {
-          throw new Error('ERR_INCORRECT_AUTH');
-        }
-        const newAccessToken = jwt.sign({ id }, accessSecret, { expiresIn: accessExpires });
-        const newRefreshToken = jwt.sign({ id, newAccessToken }, refreshSecret, {
-          expiresIn: refreshExpires,
-        });
-        ctx.cookies.set('access_token', newAccessToken);
-        ctx.cookies.set('refresh_token', newRefreshToken);
-        return target.resolve(root, args, { ...context, auth });
+        console.error(error);
       }
     },
   });

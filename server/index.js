@@ -1,5 +1,8 @@
 const Koa = require('koa');
 const { ApolloServer } = require('apollo-server-koa');
+
+// process.env config
+require('dotenv').config();
 const schema = require('./graphql');
 const models = require('./sequelize');
 const db = require('./sequelize/sequelize');

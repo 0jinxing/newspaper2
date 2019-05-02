@@ -1,9 +1,9 @@
 import React from 'react';
 import gql from 'graphql-tag';
+import cookie from 'cookie';
 import classNames from 'classnames';
 import { Classes, Overlay, Button, Intent, Spinner } from '@blueprintjs/core';
 import SideMenu from '@/components/SideMenu';
-import { setAccessToken, setRefreshToken, getAccessToken } from '@/utils/auth';
 import apolloCreate from '@/utils/apollo-create';
 import styles from './index.css';
 
@@ -41,23 +41,13 @@ class Home extends React.Component {
     subscriptionList: [],
   };
 
-  static async getInitialProps() {
-    throw "";
-    // const homeResponse = await fetch(someapi2);
-    // return { homeData: homeResponse };
-  }
-
   handleReceiveMessage = async e => {
     if (!e.data || e.data.type !== 'SIGN_IN') return;
     const {
       data: {
-        accessToken,
-        refreshToken,
         user: { username, avatar },
       },
     } = e;
-    setAccessToken(accessToken);
-    setRefreshToken(refreshToken);
     this.setState({
       username,
       avatar,
@@ -72,19 +62,6 @@ class Home extends React.Component {
     });
     this.setState({ subscriptionList, loading: false });
   };
-  // async componentDidMount() {
-  //   const { client } = this.props;
-  //   if (getAccessToken()) {
-  //     this.setState({ loading: true });
-  //     const {
-  //       data: {
-  //         profile: { username, avatar },
-  //         ownSubscriptionList: { rows: subscriptionList },
-  //       },
-  //     } = await client.query({ query: INIT_DATA });
-  //     this.setState({ username, avatar, subscriptionList, loading: false });
-  //   }
-  // }
 
   componentDidMount() {
     window.addEventListener('message', this.handleReceiveMessage, false);

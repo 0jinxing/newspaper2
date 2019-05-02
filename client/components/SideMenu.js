@@ -52,7 +52,7 @@ class SideMenu extends React.Component {
             <SideDivider />
           </>
         )}
-        <Tree contents={transformTreeData(subscriptionList)}></Tree>
+        <Tree contents={transformTreeData(subscriptionList)} />
         <div className={classNames(styles.sideCopyright, Classes.TEXT_MUTED)}>
           © 2019 JINXING LIN
         </div>

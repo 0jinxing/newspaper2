@@ -1,53 +1,52 @@
-import fetch from 'isomorphic-unfetch';
 import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-
-const authFetch = async (...params) => {
-  const [url, options] = params;
-  try {
-    const accessToken = getAccessToken();
-    const res = await fetch(url, {
-      ...options,
-      headers: accessToken
-        ? {
-            ...options.headers,
-            Authorization: `Bearer ${accessToken}`,
-          }
-        : options.headers,
-    });
-    return res;
-  } catch (error) {
-    if (error.message === 'ERR_INCORRECT_AUTH') {
-      // @TODO refresh token
-    }
-  }
-};
+import { InMemoryCache } from 'apollo-boost';
+import { createHttpLink } from 'apollo-link-http';
+import { setContext } from 'apollo-link-context';
+import fetch from 'isomorphic-unfetch';
 
 let apolloClient = null;
 
+// Polyfill fetch() on the server (used by apollo-client)
 if (!process.browser) {
   global.fetch = fetch;
 }
 
-const create = initialState => {
+function create(initialState, { getToken }) {
+  const httpLink = createHttpLink({
+    uri: '/graphql',
+    credentials: 'same-origin',
+  });
+
+  const authLink = setContext((_, { headers }) => {
+    const token = getToken();
+    return {
+      headers: {
+        authorization: token ? `Bearer ${token}` : '',
+        ...headers,
+      },
+    };
+  });
+
+  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     connectToDevTools: process.browser,
-    ssrMode: !process.browser,
-    link: new HttpLink({
-      uri: '/graphql',
-      credentials: 'same-origin',
-    }),
+    ssrMode: !process.browser, // Disables forceFetch on the server (so queries are only run once)
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache().restore(initialState || {}),
   });
-};
+}
 
-export default initialState => {
+export default function initApollo(initialState, options) {
+  // Make sure to create a new client for every server-side request so that data
+  // isn't shared between connections (which would be bad)
   if (!process.browser) {
-    return create(initialState);
+    return create(initialState, options);
   }
+
+  // Reuse client on the client-side
   if (!apolloClient) {
-    apolloClient = create(initialState);
+    apolloClient = create(initialState, options);
   }
+
   return apolloClient;
-};
+}

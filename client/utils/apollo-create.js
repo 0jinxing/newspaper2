@@ -1,3 +1,4 @@
+import React from 'react';
 import { ApolloConsumer } from 'react-apollo';
 
 const apolloCreate = Component => {

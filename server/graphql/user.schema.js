@@ -120,9 +120,6 @@ const signUpUser = {
     const refreshToken = jwt.sign({ id: user.id, accessToken }, refreshSecret, {
       expiresIn: refreshExpires,
     });
-
-    ctx.cookies.set('access_token', accessToken);
-    ctx.cookies.set('refresh_token', refreshToken);
     return { user, accessToken, refreshToken };
   },
 };
@@ -146,9 +143,6 @@ const signInUser = {
       const refreshToken = jwt.sign({ id: user.id, accessToken }, refreshSecret, {
         expiresIn: refreshExpires,
       });
-
-      ctx.cookies.set('access_token', accessToken);
-      ctx.cookies.set('refresh_token', refreshToken);
       return {
         user,
         accessToken,

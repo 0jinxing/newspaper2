@@ -12,6 +12,7 @@ import {
   Toaster,
   Position,
 } from '@blueprintjs/core';
+import cookie from 'cookie';
 import Layout from '@/layouts/UserAuthLayout';
 import styles from './auth.css';
 
@@ -85,11 +86,14 @@ class Register extends React.Component {
                 const { username, password, email } = this.state;
                 signUpUser({ variables: { username, password, email } })
                   .then(result => {
-                    const { data } = result;
-                    window.opener.postMessage(
-                      { type: 'SIGN_IN', ...data.signUpUser },
-                      location.origin
-                    );
+                    const {
+                      data: { signUpUser },
+                    } = result;
+                    
+                    cookie.serialize('token', signUpUser.accessToken, {
+                      maxAge: 30 * 24 * 60 * 60,
+                    });
+                    window.opener.postMessage({ type: 'SIGN_IN', ...signUpUser }, location.origin);
                     window.close();
                   })
                   .catch(error => {
