@@ -10,14 +10,13 @@ const passwordHash = (password, sale = '') => {
 const passwordVerify = (password, sha1, sale = '') => passwordHash(password, sale) === sha1;
 
 // jwt config
-const accessSecret = process.env.JWT_ACCESS_SECRET || '172601673@qq.com';
-const refreshSecret = process.env.JWT_REFRESH_SECRET || '0jinxing@gmail.com';
-const accessExpires = process.env.JWT_ACCESS_EXPIRES || 1000 * 60 * 30; // 30 m
-const refreshExpires = process.env.JWT_REFRESH_EXPIRES || 1000 * 60 * 60 * 30; // 30 d
+const accessSecret = process.env.JWT_ACCESS_SECRET;
+const refreshSecret = process.env.JWT_REFRESH_SECRET;
+const accessExpires = process.env.JWT_ACCESS_EXPIRES; // 30 m
+const refreshExpires = process.env.JWT_REFRESH_EXPIRES; // 30 d
 
 const signAccessToken = payload => {
-  const a = jwt.sign(payload, accessSecret, { expiresIn: accessExpires });
-  return a;
+  return jwt.sign(payload, accessSecret, { expiresIn: accessExpires });
 };
 
 const signRefreshToken = (payload, accessToken) => {
@@ -34,11 +33,13 @@ const withAuth = target => {
       const { ctx } = context;
       try {
         const accessToken = /Bearer\s+(.*)/.exec(ctx.headers['authorization'])[1];
-        const auth = jwt.verify(accessToken, accessSecret);
-        return target.resolve(root, args, { ...context, auth });
+        return target.resolve(root, args, {
+          ...context,
+          auth: jwt.verify(accessToken, accessSecret),
+        });
       } catch (error) {
-        // 更换 token
-        console.error(error);
+        // @TODO Refresh Token
+        console.log(error);
       }
     },
   });

@@ -19,12 +19,10 @@ import styles from './auth.css';
 const SIGN_UP_USER = gql`
   mutation SignUpUser($username: String!, $email: String!, $password: String!) {
     signUpUser(username: $username, email: $email, password: $password) {
-      user {
-        username
-        avatar
-      }
       accessToken
+      accessExpires
       refreshToken
+      accessExpires
     }
   }
 `;
@@ -89,10 +87,6 @@ class Register extends React.Component {
                     const {
                       data: { signUpUser },
                     } = result;
-                    
-                    cookie.serialize('token', signUpUser.accessToken, {
-                      maxAge: 30 * 24 * 60 * 60,
-                    });
                     window.opener.postMessage({ type: 'SIGN_IN', ...signUpUser }, location.origin);
                     window.close();
                   })

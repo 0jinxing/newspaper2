@@ -1,13 +1,12 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import cookie from 'cookie';
 import classNames from 'classnames';
+import { withApollo } from 'react-apollo';
 import { Classes, Overlay, Button, Intent, Spinner } from '@blueprintjs/core';
 import SideMenu from '@/components/SideMenu';
-import apolloCreate from '@/utils/apollo-create';
 import styles from './index.css';
 
-const INIT_DATA = gql`
+const INITIAL_DATA = gql`
   query InitData {
     profile {
       username
@@ -22,45 +21,26 @@ const INIT_DATA = gql`
   }
 `;
 
-const OWN_SUBSCRIPTION_LIST = gql`
-  query OwnSubscriptionList($offset: Int, $limit: Int) {
-    ownSubscriptionList(offset: $offset, limit: $limit) {
-      rows {
-        title
-        id
-      }
-    }
-  }
-`;
-
 class Home extends React.Component {
+  static async getInitialProps({ apolloClient }) {
+    const props = await apolloClient.query({
+      query: INITIAL_DATA,
+    });
+    return props;
+  }
+
   state = {
+    data: {},
     loading: false,
-    username: null,
-    avatar: null,
-    subscriptionList: [],
   };
 
   handleReceiveMessage = async e => {
     if (!e.data || e.data.type !== 'SIGN_IN') return;
-    const {
-      data: {
-        user: { username, avatar },
-      },
-    } = e;
-    this.setState({
-      username,
-      avatar,
-      loading: true,
+    const { client } = this.props;
+    const result = await client.query({
+      query: INITIAL_DATA,
     });
-    const {
-      data: {
-        ownSubscriptionList: { rows: subscriptionList },
-      },
-    } = await this.props.client.query({
-      query: OWN_SUBSCRIPTION_LIST,
-    });
-    this.setState({ subscriptionList, loading: false });
+    
   };
 
   componentDidMount() {
@@ -72,7 +52,7 @@ class Home extends React.Component {
   }
 
   render() {
-    const { loading, subscriptionList, username, avatar } = this.state;
+    const { loading, subscriptionList = [], username, avatar } = this.state || {};
     if (loading)
       return (
         <div className={styles.spinnerWrap}>
@@ -90,4 +70,4 @@ class Home extends React.Component {
   }
 }
 
-export default apolloCreate(Home);
+export default withApollo(Home);

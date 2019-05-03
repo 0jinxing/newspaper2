@@ -12,6 +12,15 @@ import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import './global.css';
 
 class $App extends App {
+  static async getInitialProps({ Component, ctx }) {
+    let pageProps = {};
+
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx);
+    }
+
+    return { pageProps };
+  }
   render() {
     const { Component, pageProps, store, apolloClient } = this.props;
     return (

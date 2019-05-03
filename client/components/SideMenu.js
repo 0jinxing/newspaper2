@@ -1,9 +1,26 @@
 import React from 'react';
+import gql from 'graphql-tag';
 import classNames from 'classnames';
 import { Icon, Classes, Tree } from '@blueprintjs/core';
+import { withApollo } from 'react-apollo';
 import openWindow from '@/utils/open-window';
 import SideDivider from './SideDivider';
 import styles from './SideMenu.css';
+
+const SIDE_MENU_DATA = gql`
+  query InitData {
+    profile {
+      username
+      avatar
+    }
+    ownSubscriptionList {
+      rows {
+        title
+        id
+      }
+    }
+  }
+`;
 
 const transformTreeData = data => {
   return data.map(item => ({

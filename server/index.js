@@ -8,7 +8,7 @@ const models = require('./sequelize');
 const db = require('./sequelize/sequelize');
 const logger = require('./logger');
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+const port = parseInt(process.env.PORT, 10);
 const server = new Koa();
 const dev = process.env.NODE_ENV !== 'production';
 

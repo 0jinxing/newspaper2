@@ -22,7 +22,7 @@ export default App => {
       const apollo = initApollo(
         {},
         {
-          getToken: () => parseCookies(req).token,
+          getToken: () => parseCookies(req)['access_token'],
         }
       );
 
