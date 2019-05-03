@@ -1,4 +1,7 @@
 const chalk = require('chalk');
+
+require('dotenv').config();
+
 const models = require('../server/sequelize');
 const db = require('../server/sequelize/sequelize');
 

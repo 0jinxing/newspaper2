@@ -7,7 +7,7 @@ import SideMenu from '@/components/SideMenu';
 import styles from './index.css';
 
 const INITIAL_DATA = gql`
-  query InitData {
+  query InitData($entriesOffset: Int! = 0, $entriesLimit: Int! = 20) {
     profile {
       username
       avatar
@@ -18,29 +18,47 @@ const INITIAL_DATA = gql`
         id
       }
     }
+    ownSubscriptionEntryList(offset: $entriesOffset, limit: $entriesLimit) {
+      rows {
+        id
+        title
+        summary
+        date
+        link
+      }
+      count
+    }
   }
 `;
 
 class Home extends React.Component {
   static async getInitialProps({ apolloClient }) {
-    const props = await apolloClient.query({
-      query: INITIAL_DATA,
-    });
-    return props;
+    try {
+      const props = await apolloClient.query({
+        query: INITIAL_DATA,
+      });
+      return props;
+    } catch {
+      return {};
+    }
   }
 
   state = {
-    data: {},
+    data: null,
     loading: false,
+    error: null,
   };
 
   handleReceiveMessage = async e => {
     if (!e.data || e.data.type !== 'SIGN_IN') return;
+
     const { client } = this.props;
-    const result = await client.query({
+    await client.cache.reset();
+    this.setState({ loading: true });
+    const { error, data } = await client.query({
       query: INITIAL_DATA,
     });
-    
+    this.setState({ loading: false, error, data });
   };
 
   componentDidMount() {
@@ -52,7 +70,9 @@ class Home extends React.Component {
   }
 
   render() {
-    const { loading, subscriptionList = [], username, avatar } = this.state || {};
+    const data = this.state.data ? this.state.data : this.props.data;
+    const { profile, ownSubscriptionList } = data || {};
+    const { loading, error } = this.state;
     if (loading)
       return (
         <div className={styles.spinnerWrap}>
@@ -62,9 +82,14 @@ class Home extends React.Component {
     return (
       <div className={classNames(styles.homeWrap)}>
         <section className={styles.navWrap}>
-          <SideMenu subscriptionList={subscriptionList} username={username} avatar={avatar} />
+          <SideMenu
+            subscriptionList={ownSubscriptionList ? ownSubscriptionList.rows : []}
+            isLogined={!profile}
+            username={profile && profile.username}
+            avatar={profile && profile.avatar}
+          />
         </section>
-        <main className={Classes.FILL}>lorem</main>
+        <main className={Classes.FILL}>{profile && profile.username}</main>
       </div>
     );
   }

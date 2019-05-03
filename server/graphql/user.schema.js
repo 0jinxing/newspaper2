@@ -130,11 +130,11 @@ const signUpUser = {
       expiresIn: refreshExpires,
     });
     ctx.cookies.set('access_token', accessToken, {
-      maxAge: accessExpires,
+      maxAge: accessExpires * 1000,
       httpOnly: false,
     });
     ctx.cookies.set('refresh_token', refreshToken, {
-      maxAge: refreshExpires,
+      maxAge: refreshExpires * 1000,
       httpOnly: false,
     });
     return { user, accessToken, accessExpires, refreshToken, refreshExpires };
@@ -161,11 +161,11 @@ const signInUser = {
         expiresIn: refreshExpires,
       });
       ctx.cookies.set('access_token', accessToken, {
-        maxAge: accessExpires,
+        maxAge: accessExpires * 1000,
         httpOnly: false,
       });
       ctx.cookies.set('refresh_token', refreshToken, {
-        maxAge: refreshExpires,
+        maxAge: refreshExpires * 1000,
         httpOnly: false,
       });
       return {

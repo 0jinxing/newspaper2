@@ -38,8 +38,8 @@ const withAuth = target => {
           auth: jwt.verify(accessToken, accessSecret),
         });
       } catch (error) {
-        // @TODO Refresh Token
-        console.log(error);
+        // @TODO Refresh Token Or Login
+        throw error;
       }
     },
   });

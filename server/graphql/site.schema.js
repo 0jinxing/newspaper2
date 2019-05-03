@@ -35,7 +35,7 @@ const SiteType = new GraphQLObjectType({
     },
     date: {
       type: DateType,
-    },
+    }
   },
 });
 
