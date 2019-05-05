@@ -35,6 +35,20 @@ const EntryType = new GraphQLObjectType({
 const EntryPaginationType = createPaginationType(EntryType, 'EntryPagination');
 
 // query
+const entryDetail = {
+  type: EntryType,
+  args: {
+    id: {
+      type: GraphQLID,
+    },
+  },
+  resolve: async (root, args, { models }) => {
+    const { EntryModel } = models;
+    const { id } = args;
+    return EntryModel.findOne({ where: { id } });
+  },
+};
+
 const allEntries = {
   type: EntryPaginationType,
   args: {
@@ -146,6 +160,7 @@ module.exports = {
   EntryType,
   EntryPaginationType,
   query: {
+    entryDetail,
     allEntries,
     todayEntryList,
     entryListOfSite,

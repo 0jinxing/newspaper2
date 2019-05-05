@@ -2,17 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import {
-  FormGroup,
-  InputGroup,
-  Button,
-  Tooltip,
-  Intent,
-  Icon,
-  Toaster,
-  Position,
-} from '@blueprintjs/core';
-import cookie from 'cookie';
+import { FormGroup, InputGroup, Button, Intent, Toaster, Position } from '@blueprintjs/core';
 import Layout from '@/layouts/UserAuthLayout';
 import styles from './auth.css';
 
@@ -48,7 +38,7 @@ class Register extends React.Component {
     return (
       <Mutation mutation={SIGN_UP_USER}>
         {(signUpUser, { error, data, loading }) => (
-          <Layout title="注册 2NEWSPAPER">
+          <Layout title="注册 NEWSPAPER2">
             <FormGroup label="昵称">
               <InputGroup
                 placeholder="输入你的昵称..."

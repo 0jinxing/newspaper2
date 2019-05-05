@@ -1,4 +1,4 @@
-const { STRING, TEXT, INTEGER, DATE } = require('sequelize');
+const { STRING, TEXT, INTEGER, DATE, DataTypes } = require('sequelize');
 const sequelize = require('../sequelize');
 
 const Entry = sequelize.define(
@@ -25,11 +25,11 @@ const Entry = sequelize.define(
       commit: '`Entry` 更新时间，区别于 update_at',
     },
     description: {
-      type: TEXT,
+      type: TEXT('long'),
       allowNull: false,
     },
     summary: {
-      type: TEXT,
+      type: TEXT('long'),
     },
     siteId: {
       type: INTEGER.UNSIGNED,

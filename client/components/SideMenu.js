@@ -77,7 +77,7 @@ class SideMenu extends React.Component {
 
   handleNodeCliek = node => {
     if (node.hasCaret) return;
-    Router.push(`/post/${node.id}`);
+    Router.push(`/entry/$id?id=${node.id}`, `/entry/${node.id}`);
   };
 
   render() {
@@ -86,41 +86,51 @@ class SideMenu extends React.Component {
 
     return (
       <nav className={styles.sideMenu}>
-        <div className={classNames(styles.sideHead)}>
-          <img src="/static/favicon.png" className={styles.sideLogo} />
-          <div>
-            <p className={styles.sideTitle}>2NEWSPAPER</p>
-            <a>View on GitHub</a>
-          </div>
-        </div>
-        <SideDivider />
-        <div className={classNames(styles.menuItem, Classes.MENU_ITEM)}>
-          <Icon icon="calendar" /> <span className={Classes.TEXT_MUTED}>Today</span>
-        </div>
-        <SideDivider />
-        <div className={classNames(styles.menuItem, Classes.MENU_ITEM)}>
-          <Icon icon="search" /> <span className={Classes.TEXT_MUTED}>Search</span>
-        </div>
-        <SideDivider />
-        {username ? null : (
-          <>
-            <div
-              className={classNames(styles.menuItem, Classes.MENU_ITEM)}
-              onClick={this.handleLogin}
-            >
-              <Icon icon="log-in" /> <span className={Classes.TEXT_MUTED}>Log in</span>
+        <div className={styles.wrap}>
+          <div className={classNames(styles.sideHead)}>
+            <img src="/static/favicon.png" className={styles.sideLogo} />
+            <div>
+              <p className={styles.sideTitle}>NEWSPAPER2</p>
+              <a>View on GitHub</a>
             </div>
-            <SideDivider />
-          </>
-        )}
-        <Tree
-          onNodeClick={this.handleNodeCliek}
-          onNodeCollapse={this.handleNodeCollapse}
-          onNodeExpand={this.handleNodeExpand}
-          contents={nodes}
-        />
-        <div className={classNames(styles.sideCopyright, Classes.TEXT_MUTED)}>
-          © 2019 JINXING LIN
+          </div>
+          <SideDivider />
+          <div className={classNames(styles.menuItem, Classes.MENU_ITEM)}>
+            <Icon icon="calendar" /> <span className={Classes.TEXT_MUTED}>Today</span>
+          </div>
+          <SideDivider />
+          <div className={classNames(styles.menuItem, Classes.MENU_ITEM)}>
+            <Icon icon="search" /> <span className={Classes.TEXT_MUTED}>Search</span>
+          </div>
+          <SideDivider />
+          {username ? (
+            <>
+              <div className={classNames(styles.menuItem, Classes.MENU_ITEM)}>
+                <Icon icon="star" /> <span className={Classes.TEXT_MUTED}>My Start</span>
+              </div>
+              <Tree
+                onNodeClick={this.handleNodeCliek}
+                onNodeCollapse={this.handleNodeCollapse}
+                onNodeExpand={this.handleNodeExpand}
+                contents={nodes}
+              />
+              <SideDivider />
+            </>
+          ) : (
+            <>
+              <div
+                className={classNames(styles.menuItem, Classes.MENU_ITEM)}
+                onClick={this.handleLogin}
+              >
+                <Icon icon="log-in" /> <span className={Classes.TEXT_MUTED}>Log in</span>
+              </div>
+              <SideDivider />
+            </>
+          )}
+
+          <div className={classNames(styles.sideCopyright, Classes.TEXT_MUTED)}>
+            © 2019 JINXING LIN
+          </div>
         </div>
       </nav>
     );

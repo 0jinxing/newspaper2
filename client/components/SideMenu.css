@@ -4,12 +4,16 @@
   background-color: #fff;
   width: 1269px;
   height: 100vh;
-  overflow-y: auto;
-  padding-bottom: 30px;
+  overflow-y: scroll;
   margin-left: -999px;
   padding-left: 1004px;
 }
 
+.wrap {
+  position: relative;
+  padding-bottom: 80px;
+  min-height: 100%;
+}
 .sideLogo {
   width: 65px;
   display: block;
@@ -30,7 +34,8 @@
 }
 
 .menuItem {
-  padding: 7px;
+  padding: 8px;
+  /* padding-left: 0; */
 }
 .menuItem:hover {
   font-weight: 600;

@@ -1,10 +1,10 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import classNames from 'classnames';
 import { withApollo } from 'react-apollo';
-import { Classes, Overlay, Button, Intent, Spinner } from '@blueprintjs/core';
+import { Spinner, Classes } from '@blueprintjs/core';
+import classNames from 'classnames';
 import SideMenu from '@/components/SideMenu';
-import styles from './index.css';
+import styles from './IndexLayout.css';
 
 const INITIAL_DATA = gql`
   query InitData($entriesOffset: Int! = 0, $entriesLimit: Int! = 20) {
@@ -18,42 +18,20 @@ const INITIAL_DATA = gql`
         id
       }
     }
-    ownSubscriptionEntryList(offset: $entriesOffset, limit: $entriesLimit) {
-      rows {
-        id
-        title
-        summary
-        date
-        link
-      }
-      count
-    }
   }
 `;
 
-class Home extends React.Component {
-  static async getInitialProps({ apolloClient }) {
-    try {
-      const props = await apolloClient.query({
-        query: INITIAL_DATA,
-      });
-      return props;
-    } catch {
-      return {};
-    }
-  }
-
+class IndexLayout extends React.Component {
   state = {
+    error: null,
     data: null,
     loading: false,
-    error: null,
   };
 
   handleReceiveMessage = async e => {
     if (!e.data || e.data.type !== 'SIGN_IN') return;
 
     const { client } = this.props;
-    await client.cache.reset();
     this.setState({ loading: true });
     const { error, data } = await client.query({
       query: INITIAL_DATA,
@@ -70,9 +48,14 @@ class Home extends React.Component {
   }
 
   render() {
-    const data = this.state.data ? this.state.data : this.props.data;
-    const { profile, ownSubscriptionList } = data || {};
-    const { loading, error } = this.state;
+    const { children } = this.props;
+    const data = this.state.data || this.props.data;
+    const profile = data.profile || {};
+    const ownSubscriptionList = data.ownSubscriptionList || { rows: [], count: 0 };
+
+    const loading = this.state.loading || this.props.loading;
+    const error = this.state.error || this.props.error;
+
     if (loading)
       return (
         <div className={styles.spinnerWrap}>
@@ -80,19 +63,19 @@ class Home extends React.Component {
         </div>
       );
     return (
-      <div className={classNames(styles.homeWrap)}>
+      <div className={classNames(styles.wrap)}>
         <section className={styles.navWrap}>
           <SideMenu
-            subscriptionList={ownSubscriptionList ? ownSubscriptionList.rows : []}
-            isLogined={!profile}
-            username={profile && profile.username}
-            avatar={profile && profile.avatar}
+            subscriptionList={ownSubscriptionList.rows}
+            isLogined={!!Object.keys(profile).length}
+            username={profile.username}
+            avatar={profile.avatar}
           />
         </section>
-        <main className={Classes.FILL}>{profile && profile.username}</main>
+        <main className={classNames(Classes.FILL, styles.container)}>{children}</main>
       </div>
     );
   }
 }
 
-export default withApollo(Home);
+export default withApollo(IndexLayout);

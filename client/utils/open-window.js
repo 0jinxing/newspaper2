@@ -14,8 +14,8 @@ const openPopUp = (url, width, height, name) => {
     if (window.focus()) {
       popupReference.focus();
     }
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
   return popupReference;
 };

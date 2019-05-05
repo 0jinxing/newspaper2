@@ -1,3 +1,13 @@
 :global(body) {
   overflow-y: scroll;
+  background: #f5f8fa;
+}
+:global(.newspaper2-rss-content) {
+  font-size: 16px;
+  line-height: 1.6em;
+}
+:global(.newspaper2-rss-content img) {
+  display: block;
+  max-width: 100%;
+  margin: .8em auto;
 }

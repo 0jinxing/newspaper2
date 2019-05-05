@@ -11,7 +11,6 @@ import {
   Toaster,
   Position,
 } from '@blueprintjs/core';
-import cookie from 'cookie';
 import Layout from '@/layouts/UserAuthLayout';
 import ValidFormGroup from '@/components/ValidFormGroup';
 import styles from './auth.css';
@@ -62,7 +61,7 @@ class Login extends React.Component {
     return (
       <Mutation mutation={SIGN_IN_USER}>
         {(signInUser, { error, data, loading }) => (
-          <Layout title="登录 2NEWSPAPER">
+          <Layout title="登录 NEWSPAPER2">
             <ValidFormGroup label="邮箱" rules={[{ type: 'isEmail', message: '邮箱格式不正确' }]}>
               <InputGroup
                 placeholder="输入你的邮箱..."

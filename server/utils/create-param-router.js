@@ -11,11 +11,8 @@ module.exports = app => {
     .map(full => full.replace(pagesRootPath, ''))
     .map(pp => /((?:\/[0-9A-Za-z]+)*)\/\$([0-9A-Za-z]+)/g.exec(pp))
     .reduce((router, [page, path, paramName]) => {
-      console.log(page, path, paramName);
-      console.log(`${path}/:${paramName}`);
       router.get(`${path}/:${paramName}`, ctx => {
         const { req, res, params } = ctx;
-        console.log(params);
         app.render(req, res, page, params);
       });
       return router;

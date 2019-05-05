@@ -1,10 +1,10 @@
 {
-  "name": "2newspaper",
+  "name": "newspaper2",
   "version": "1.0.0",
   "main": "scripts/start.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./server/index.js",
+    "start": "node ./nodemon.js",
     "prettier": "node ./scripts/prettier.js"
   },
   "dependencies": {
@@ -46,6 +46,7 @@
     "sequelize": "^5.1.0",
     "url-loader": "^1.1.2",
     "validator": "^10.11.0",
+    "watch": "^1.0.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {

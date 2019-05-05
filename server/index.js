@@ -15,7 +15,6 @@ const server = new Koa();
 const dev = process.env.NODE_ENV !== 'production';
 
 const app = next({ dev, dir: './client' });
-// const handle = app.getRequestHandler();
 const handler = routes.getRequestHandler(app);
 
 app.prepare().then(() => {
